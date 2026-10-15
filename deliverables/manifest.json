@@ -1,0 +1,23 @@
+{
+  "generator": "orderflow-engine-tools/render/build_deliverables.py",
+  "documents": [
+    {
+      "source": "orderflow-engine-api/docs/adr/0001-order-pricing-and-confirmation.md",
+      "sha256": "2c54aa1e041ee075966433fd199c742e757133ec200c7ca9f95e467ff2de456f",
+      "outputs": [
+        "adr/0001-order-pricing-and-confirmation.docx",
+        "adr/0001-order-pricing-and-confirmation.pdf"
+      ],
+      "pages": 1
+    },
+    {
+      "source": "orderflow-engine-api/docs/adr/0001-order-pricing-and-confirmation.es.md",
+      "sha256": "5435a2f8c61a8592899ec8b2d23b9a52f4a836b16c3480e20f4b8a8771e2cb08",
+      "outputs": [
+        "adr/0001-order-pricing-and-confirmation.es.docx",
+        "adr/0001-order-pricing-and-confirmation.es.pdf"
+      ],
+      "pages": 1
+    }
+  ]
+}
