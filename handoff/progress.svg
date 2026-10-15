@@ -1,10 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 660" width="920" height="660" role="img" aria-label="Task progress: 1 of 18 tasks done (6%)" font-family="ui-sans-serif, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 660" width="920" height="660" role="img" aria-label="Task progress: 2 of 18 tasks done (11%)" font-family="ui-sans-serif, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
   <title>Task progress</title>
   <rect x="0.5" y="0.5" width="919" height="659" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
-  <text x="460" y="34" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">Task progress: 1 of 18 done (6%)</text>
+  <text x="460" y="34" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">Task progress: 2 of 18 done (11%)</text>
   <text x="460" y="54" text-anchor="middle" font-size="11.5" fill="#475569">Generated from the task table in HANDOFF.md. Project start 2026-10-13. Planned day vs the day each task was done</text>
   <rect x="24" y="72" width="872" height="14" rx="7" fill="#f1f5f9" stroke="#cbd5e1"/>
-  <rect x="24" y="72" width="48" height="14" rx="7" fill="#16a34a"/>
+  <rect x="24" y="72" width="97" height="14" rx="7" fill="#16a34a"/>
   <text x="24" y="114" font-size="11" font-weight="600" fill="#0369a1">Task</text>
   <text x="440" y="114" font-size="11" font-weight="600" fill="#0369a1">Planned</text>
   <text x="520" y="114" font-size="11" font-weight="600" fill="#0369a1">Status</text>
@@ -18,7 +18,9 @@
   <text x="24" y="170" font-size="11.5" fill="#0f172a"><tspan font-weight="600">T-01</tspan> Scaffold API and workspace test command</text>
   <text x="440" y="170" font-size="11.5" fill="#475569">D1</text>
   <rect x="520" y="159" width="300" height="14" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
-  <text x="528" y="170" font-size="10" fill="#475569">to do</text>
+  <rect x="520" y="159" width="300" height="14" rx="4" fill="#16a34a" stroke="#15803d"/>
+  <text x="528" y="170" font-size="10" fill="#ffffff">done</text>
+  <text x="836" y="170" font-size="11.5" fill="#b45309">D3 (late)</text>
   <text x="24" y="196" font-size="11.5" fill="#0f172a"><tspan font-weight="600">T-02</tspan> Money and currency policy</text>
   <text x="440" y="196" font-size="11.5" fill="#475569">D1</text>
   <rect x="520" y="185" width="300" height="14" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
