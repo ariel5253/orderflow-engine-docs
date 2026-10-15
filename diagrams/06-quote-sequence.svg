@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1160 660" width="1160" height="660" role="img" aria-label="Quote sequence: the client posts a cart; the use case normalizes it, loads the snapshot, calls the pure engine and inserts the quote with its lines and discount components, then the controller returns 201." font-family="ui-sans-serif, system-ui, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif">
+  <title>Quote: the price is computed once and sealed</title>
+  <desc>Prices and levers are read at time T; the engine is pure; the stored lines are never updated</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ea" d="M0,0 L10,4 L0,8 z" fill="#475569"/></marker><marker id="abad" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="eabad" d="M0,0 L10,4 L0,8 z" fill="#dc2626"/></marker><marker id="atx" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="eatx" d="M0,0 L10,4 L0,8 z" fill="#16a34a"/></marker><marker id="akey" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="eakey" d="M0,0 L10,4 L0,8 z" fill="#0284c7"/></marker>
+    <style>
+    @media (prefers-color-scheme: dark) {
+      .card { fill: #0b1220; stroke: #1e293b; } .group { fill: #0f172a; stroke: #334155; }
+      .node { fill: #111a2e; stroke: #475569; } .key { fill: #0c3a52; stroke: #38bdf8; }
+      .tx { fill: #052e1a; stroke: #22c55e; } .warn { fill: #3a2a06; stroke: #f59e0b; }
+      .muted { fill: #0f172a; stroke: #475569; } .note { fill: #131c2e; stroke: #475569; }
+      .bad { fill: #3b0d0d; stroke: #f87171; }
+      .t { fill: #e2e8f0; } .s { fill: #94a3b8; } .txt { fill: #4ade80; } .warnt { fill: #fbbf24; }
+      .badt { fill: #f87171; } .keyt { fill: #38bdf8; }
+      .edge { stroke: #94a3b8; } .ea { fill: #94a3b8; } .edgebad { stroke: #f87171; } .eabad { fill: #f87171; }
+      .edgetx { stroke: #4ade80; } .eatx { fill: #4ade80; } .edgekey { stroke: #38bdf8; } .eakey { fill: #38bdf8; }
+      .life { stroke: #475569; } .halo { stroke: #0b1220; }
+    }
+    </style>
+  </defs>
+  <rect class="card" x="0.5" y="0.5" width="1159" height="659" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+  <text class="t" x="580" y="34" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">Quote: the price is computed once and sealed</text>
+  <text class="s" x="580" y="54" text-anchor="middle" font-size="11.5" fill="#475569">Prices and levers are read at time T; the engine is pure; the stored lines are never updated</text>
+  <rect class="node" x="15" y="74" width="170" height="44" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="100" y="92.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Client</text>
+  <text class="s" x="100" y="108.5" text-anchor="middle" font-size="10.5" fill="#475569">shopkeeper app</text>
+  <line class="life" x1="100" y1="118" x2="100" y2="520" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+  <rect class="node" x="205" y="74" width="170" height="44" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="290" y="92.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">QuoteController</text>
+  <text class="s" x="290" y="108.5" text-anchor="middle" font-size="10.5" fill="#475569">web adapter</text>
+  <line class="life" x1="290" y1="118" x2="290" y2="520" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+  <rect class="node" x="405" y="74" width="170" height="44" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="490" y="92.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">CreateQuoteUseCase</text>
+  <text class="s" x="490" y="108.5" text-anchor="middle" font-size="10.5" fill="#475569">application</text>
+  <line class="life" x1="490" y1="118" x2="490" y2="520" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+  <rect class="node" x="605" y="74" width="170" height="44" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="690" y="92.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">SnapshotProvider</text>
+  <text class="s" x="690" y="108.5" text-anchor="middle" font-size="10.5" fill="#475569">outbound port</text>
+  <line class="life" x1="690" y1="118" x2="690" y2="520" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+  <rect class="key" x="795" y="74" width="170" height="44" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.2"/>
+  <text class="t" x="880" y="92.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">PricingEngine</text>
+  <text class="s" x="880" y="108.5" text-anchor="middle" font-size="10.5" fill="#475569">pure domain</text>
+  <line class="life" x1="880" y1="118" x2="880" y2="520" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+  <rect class="node" x="975" y="74" width="170" height="44" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="1060" y="92.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">QuoteRepository</text>
+  <text class="s" x="1060" y="108.5" text-anchor="middle" font-size="10.5" fill="#475569">outbound port</text>
+  <line class="life" x1="1060" y1="118" x2="1060" y2="520" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+  <path class="edge" d="M100,150 L287,150" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="195" y="143" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">POST /api/v1/quotes</text>
+  <path class="edge" d="M290,186 L487,186" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="390" y="179" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">create(tenant, customer, cart)</text>
+  <path class="edge" d="M490,210 L534,210 L534,228 L494,228" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="542" y="223" text-anchor="start" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">normalize cart (BR-00)</text>
+  <path class="edge" d="M490,270 L687,270" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="590" y="263" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">load prices, levers, rates, policy</text>
+  <path class="edge" d="M690,306 L493,306" fill="none" stroke="#475569" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#a)"/>
+  <text class="s halo" x="590" y="299" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">snapshot at time T</text>
+  <path class="edge" d="M490,342 L877,342" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="685" y="335" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">price(cart, snapshot)</text>
+  <path class="edge" d="M880,378 L493,378" fill="none" stroke="#475569" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#a)"/>
+  <text class="s halo" x="685" y="371" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">breakdown</text>
+  <path class="edge" d="M490,414 L1057,414" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="775" y="407" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">insert quote · lines · adjustments</text>
+  <path class="edge" d="M490,450 L293,450" fill="none" stroke="#475569" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#a)"/>
+  <text class="s halo" x="390" y="443" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">quote</text>
+  <path class="edge" d="M290,486 L103,486" fill="none" stroke="#475569" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#a)"/>
+  <text class="s halo" x="195" y="479" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">201 · breakdown · credit</text>
+  <rect class="note" x="40" y="540" width="340" height="86" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text class="t" x="54" y="562" text-anchor="start" font-size="11.5" font-weight="600" fill="#0f172a">Pure and deterministic</text>
+  <text class="s" x="54" y="581" text-anchor="start" font-size="10.5" fill="#475569">The engine does no I/O, so the same snapshot always</text>
+  <text class="s" x="54" y="597" text-anchor="start" font-size="10.5" fill="#475569">gives the same breakdown; the golden tests pin</text>
+  <text class="s" x="54" y="613" text-anchor="start" font-size="10.5" fill="#475569">its output.</text>
+  <rect class="note" x="410" y="540" width="340" height="86" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text class="t" x="424" y="562" text-anchor="start" font-size="11.5" font-weight="600" fill="#0f172a">Insert-only</text>
+  <text class="s" x="424" y="581" text-anchor="start" font-size="10.5" fill="#475569">Quote rows are never updated. The order will</text>
+  <text class="s" x="424" y="597" text-anchor="start" font-size="10.5" fill="#475569">point at these lines and store no amount, so</text>
+  <text class="s" x="424" y="613" text-anchor="start" font-size="10.5" fill="#475569">every figure exists exactly once.</text>
+  <rect class="note" x="780" y="540" width="340" height="86" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text class="t" x="794" y="562" text-anchor="start" font-size="11.5" font-weight="600" fill="#0f172a">Credit is advisory here</text>
+  <text class="s" x="794" y="581" text-anchor="start" font-size="10.5" fill="#475569">The quote reports fits, available and shortfall,</text>
+  <text class="s" x="794" y="597" text-anchor="start" font-size="10.5" fill="#475569">but reserves nothing; the limit is enforced</text>
+  <text class="s" x="794" y="613" text-anchor="start" font-size="10.5" fill="#475569">when the order is confirmed.</text>
+  <text class="s" x="1136" y="644" text-anchor="end" font-size="10" fill="#475569">Source: SPEC §6 · api-contract E-01 · generated by orderflow-engine-tools</text>
+</svg>

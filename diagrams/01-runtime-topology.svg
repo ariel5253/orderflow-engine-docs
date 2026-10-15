@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 580" width="960" height="580" role="img" aria-label="Runtime topology: the screen calls orderflow-engine-api over HTTPS; inside the service, the web adapter invokes the use cases, which call the pure pricing engine and the persistence adapter; PostgreSQL is the single source of truth; the outbox relay is the only component that calls the push gateway and the ERP." font-family="ui-sans-serif, system-ui, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif">
+  <title>Runtime topology: one service, one database, effects only through the outbox</title>
+  <desc>Every arrow is a call that exists at runtime; nothing in the request path reaches push or the ERP</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ea" d="M0,0 L10,4 L0,8 z" fill="#475569"/></marker><marker id="abad" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="eabad" d="M0,0 L10,4 L0,8 z" fill="#dc2626"/></marker><marker id="atx" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="eatx" d="M0,0 L10,4 L0,8 z" fill="#16a34a"/></marker><marker id="akey" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="eakey" d="M0,0 L10,4 L0,8 z" fill="#0284c7"/></marker>
+    <style>
+    @media (prefers-color-scheme: dark) {
+      .card { fill: #0b1220; stroke: #1e293b; } .group { fill: #0f172a; stroke: #334155; }
+      .node { fill: #111a2e; stroke: #475569; } .key { fill: #0c3a52; stroke: #38bdf8; }
+      .tx { fill: #052e1a; stroke: #22c55e; } .warn { fill: #3a2a06; stroke: #f59e0b; }
+      .muted { fill: #0f172a; stroke: #475569; } .note { fill: #131c2e; stroke: #475569; }
+      .bad { fill: #3b0d0d; stroke: #f87171; }
+      .t { fill: #e2e8f0; } .s { fill: #94a3b8; } .txt { fill: #4ade80; } .warnt { fill: #fbbf24; }
+      .badt { fill: #f87171; } .keyt { fill: #38bdf8; }
+      .edge { stroke: #94a3b8; } .ea { fill: #94a3b8; } .edgebad { stroke: #f87171; } .eabad { fill: #f87171; }
+      .edgetx { stroke: #4ade80; } .eatx { fill: #4ade80; } .edgekey { stroke: #38bdf8; } .eakey { fill: #38bdf8; }
+      .life { stroke: #475569; } .halo { stroke: #0b1220; }
+    }
+    </style>
+  </defs>
+  <rect class="card" x="0.5" y="0.5" width="959" height="579" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+  <text class="t" x="480" y="34" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">Runtime topology: one service, one database, effects only through the outbox</text>
+  <text class="s" x="480" y="54" text-anchor="middle" font-size="11.5" fill="#475569">Every arrow is a call that exists at runtime; nothing in the request path reaches push or the ERP</text>
+  <rect class="group" x="280" y="88" width="640" height="310" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text class="s" x="294" y="108" text-anchor="start" font-size="11" font-weight="600" fill="#475569">orderflow-engine-api · Spring Boot · one deployable</text>
+  <rect class="node" x="40" y="130" width="180" height="52" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="130" y="152.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Order-summary screen</text>
+  <text class="s" x="130" y="168.5" text-anchor="middle" font-size="10.5" fill="#475569">Angular · web repository</text>
+  <rect class="node" x="300" y="130" width="170" height="52" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="385" y="152.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Web adapter</text>
+  <text class="s" x="385" y="168.5" text-anchor="middle" font-size="10.5" fill="#475569">REST · problem+json</text>
+  <rect class="key" x="520" y="130" width="180" height="52" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.2"/>
+  <text class="t" x="610" y="152.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Use cases</text>
+  <text class="s" x="610" y="168.5" text-anchor="middle" font-size="10.5" fill="#475569">quote · confirm · history</text>
+  <rect class="node" x="750" y="130" width="150" height="52" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="825" y="152.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Pricing engine</text>
+  <text class="s" x="825" y="168.5" text-anchor="middle" font-size="10.5" fill="#475569">pure · no I/O</text>
+  <rect class="node" x="300" y="300" width="170" height="52" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="385" y="322.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Outbox relay</text>
+  <text class="s" x="385" y="338.5" text-anchor="middle" font-size="10.5" fill="#475569">lease · backoff · DEAD</text>
+  <rect class="node" x="520" y="300" width="180" height="52" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="610" y="322.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Persistence adapter</text>
+  <text class="s" x="610" y="338.5" text-anchor="middle" font-size="10.5" fill="#475569">JdbcClient · explicit locks</text>
+  <rect class="key" x="520" y="450" width="180" height="56" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.2"/>
+  <text class="t" x="610" y="474.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">PostgreSQL</text>
+  <text class="s" x="610" y="490.5" text-anchor="middle" font-size="10.5" fill="#475569">single source of truth</text>
+  <rect class="node" x="40" y="262" width="180" height="48" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="130" y="282.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Push gateway</text>
+  <text class="s" x="130" y="298.5" text-anchor="middle" font-size="10.5" fill="#475569">dedupes by event_id</text>
+  <rect class="node" x="40" y="342" width="180" height="48" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="130" y="362.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">ERP</text>
+  <text class="s" x="130" y="378.5" text-anchor="middle" font-size="10.5" fill="#475569">upserts by order number</text>
+  <path class="edge" d="M220,156 L297,156" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="258" y="148" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">HTTPS · JSON</text>
+  <path class="edge" d="M470,156 L517,156" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="495" y="148" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">invokes</text>
+  <path class="edge" d="M700,156 L747,156" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="725" y="148" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">price()</text>
+  <path class="edge" d="M610,182 L610,297" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="618" y="244" text-anchor="start" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">load · save · lock</text>
+  <path class="edge" d="M610,352 L610,447" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="618" y="424" text-anchor="start" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">one transaction per request</text>
+  <path class="edge" d="M470,326 L517,326" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="495" y="318" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">claims</text>
+  <path class="edge" d="M300,326 L250,326 L250,286 L223,286" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <path class="edge" d="M250,326 L250,366 L223,366" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="258" y="302" text-anchor="start" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">notify</text>
+  <text class="s halo" x="258" y="356" text-anchor="start" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">publish</text>
+  <rect class="note" x="720" y="430" width="220" height="96" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text class="t" x="734" y="452" text-anchor="start" font-size="11.5" font-weight="600" fill="#0f172a">Effects leave via the outbox</text>
+  <text class="s" x="734" y="471" text-anchor="start" font-size="10.5" fill="#475569">Push and ERP are called only</text>
+  <text class="s" x="734" y="487" text-anchor="start" font-size="10.5" fill="#475569">by the relay, after the order</text>
+  <text class="s" x="734" y="503" text-anchor="start" font-size="10.5" fill="#475569">is committed (P-04, P-05).</text>
+  <text class="s" x="936" y="564" text-anchor="end" font-size="10" fill="#475569">Source: SPEC §7, §12 · push and ERP are fakes in this delivery · generated by orderflow-engine-tools</text>
+</svg>

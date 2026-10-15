@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" width="960" height="360" role="img" aria-label="Dependency rule: adapters depend on the application layer, which depends on the domain; the domain never depends on adapters, and ArchUnit tests fail the build if it does." font-family="ui-sans-serif, system-ui, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif">
+  <title>Dependency rule: source dependencies point inward</title>
+  <desc>The domain imports only the JDK; a dependency in the other direction fails the build</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ea" d="M0,0 L10,4 L0,8 z" fill="#475569"/></marker><marker id="abad" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="eabad" d="M0,0 L10,4 L0,8 z" fill="#dc2626"/></marker><marker id="atx" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="eatx" d="M0,0 L10,4 L0,8 z" fill="#16a34a"/></marker><marker id="akey" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="eakey" d="M0,0 L10,4 L0,8 z" fill="#0284c7"/></marker>
+    <style>
+    @media (prefers-color-scheme: dark) {
+      .card { fill: #0b1220; stroke: #1e293b; } .group { fill: #0f172a; stroke: #334155; }
+      .node { fill: #111a2e; stroke: #475569; } .key { fill: #0c3a52; stroke: #38bdf8; }
+      .tx { fill: #052e1a; stroke: #22c55e; } .warn { fill: #3a2a06; stroke: #f59e0b; }
+      .muted { fill: #0f172a; stroke: #475569; } .note { fill: #131c2e; stroke: #475569; }
+      .bad { fill: #3b0d0d; stroke: #f87171; }
+      .t { fill: #e2e8f0; } .s { fill: #94a3b8; } .txt { fill: #4ade80; } .warnt { fill: #fbbf24; }
+      .badt { fill: #f87171; } .keyt { fill: #38bdf8; }
+      .edge { stroke: #94a3b8; } .ea { fill: #94a3b8; } .edgebad { stroke: #f87171; } .eabad { fill: #f87171; }
+      .edgetx { stroke: #4ade80; } .eatx { fill: #4ade80; } .edgekey { stroke: #38bdf8; } .eakey { fill: #38bdf8; }
+      .life { stroke: #475569; } .halo { stroke: #0b1220; }
+    }
+    </style>
+  </defs>
+  <rect class="card" x="0.5" y="0.5" width="959" height="359" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+  <text class="t" x="480" y="34" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">Dependency rule: source dependencies point inward</text>
+  <text class="s" x="480" y="54" text-anchor="middle" font-size="11.5" fill="#475569">The domain imports only the JDK; a dependency in the other direction fails the build</text>
+  <rect class="node" x="40" y="120" width="240" height="96" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="160" y="157" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Adapters</text>
+  <text class="s" x="160" y="173" text-anchor="middle" font-size="10.5" fill="#475569">web · persistence · push · erp</text>
+  <text class="s" x="160" y="189" text-anchor="middle" font-size="10.5" fill="#475569">Spring, JDBC, HTTP allowed</text>
+  <rect class="node" x="360" y="120" width="240" height="96" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="480" y="157" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Application</text>
+  <text class="s" x="480" y="173" text-anchor="middle" font-size="10.5" fill="#475569">use cases + ports</text>
+  <text class="s" x="480" y="189" text-anchor="middle" font-size="10.5" fill="#475569">@Transactional lives here only</text>
+  <rect class="key" x="680" y="120" width="240" height="96" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.2"/>
+  <text class="t" x="800" y="157" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Domain</text>
+  <text class="s" x="800" y="173" text-anchor="middle" font-size="10.5" fill="#475569">pricing.domain</text>
+  <text class="s" x="800" y="189" text-anchor="middle" font-size="10.5" fill="#475569">JDK only · no float, no double</text>
+  <path class="edge" d="M280,168 L357,168" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="318" y="160" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">depends on</text>
+  <path class="edge" d="M600,168 L677,168" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="638" y="160" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">depends on</text>
+  <path class="edgebad" d="M800,216 L800,262 L160,262 L160,219" fill="none" stroke="#dc2626" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#abad)"/>
+  <text class="badt halo" x="480" y="278" text-anchor="middle" font-size="10.5" fill="#b91c1c" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">forbidden: domain → application or adapters — the ArchUnit rule fails the build</text>
+  <rect class="muted" x="40" y="76" width="880" height="30" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="5 4"/>
+  <text class="s" x="54" y="96" text-anchor="start" font-size="11" font-weight="600" fill="#475569"></text>
+  <text class="s" x="480" y="96" text-anchor="middle" font-size="10.5" fill="#475569">config · composition root — the only module that knows every layer and wires ports to adapters</text>
+  <text class="s" x="936" y="344" text-anchor="end" font-size="10" fill="#475569">Source: constitution P-05, P-06 · DomainPurityArchTest, TransactionBoundaryArchTest · generated by orderflow-engine-tools</text>
+</svg>

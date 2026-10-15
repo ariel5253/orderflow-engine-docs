@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1010 430" width="1010" height="430" role="img" aria-label="Pricing pipeline: normalize the cart, check gift eligibility, apply combos, apply tier discounts to the remaining units, compute line net, taxable base and tax per line, then the total; credit is evaluated afterwards in the application layer. Rounding happens only at line discounts and line tax." font-family="ui-sans-serif, system-ui, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif">
+  <title>Pricing pipeline: the order in which levers apply</title>
+  <desc>A pure function price(cart, snapshot) → breakdown; amber steps are the only rounding points</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ea" d="M0,0 L10,4 L0,8 z" fill="#475569"/></marker><marker id="abad" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="eabad" d="M0,0 L10,4 L0,8 z" fill="#dc2626"/></marker><marker id="atx" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="eatx" d="M0,0 L10,4 L0,8 z" fill="#16a34a"/></marker><marker id="akey" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="eakey" d="M0,0 L10,4 L0,8 z" fill="#0284c7"/></marker>
+    <style>
+    @media (prefers-color-scheme: dark) {
+      .card { fill: #0b1220; stroke: #1e293b; } .group { fill: #0f172a; stroke: #334155; }
+      .node { fill: #111a2e; stroke: #475569; } .key { fill: #0c3a52; stroke: #38bdf8; }
+      .tx { fill: #052e1a; stroke: #22c55e; } .warn { fill: #3a2a06; stroke: #f59e0b; }
+      .muted { fill: #0f172a; stroke: #475569; } .note { fill: #131c2e; stroke: #475569; }
+      .bad { fill: #3b0d0d; stroke: #f87171; }
+      .t { fill: #e2e8f0; } .s { fill: #94a3b8; } .txt { fill: #4ade80; } .warnt { fill: #fbbf24; }
+      .badt { fill: #f87171; } .keyt { fill: #38bdf8; }
+      .edge { stroke: #94a3b8; } .ea { fill: #94a3b8; } .edgebad { stroke: #f87171; } .eabad { fill: #f87171; }
+      .edgetx { stroke: #4ade80; } .eatx { fill: #4ade80; } .edgekey { stroke: #38bdf8; } .eakey { fill: #38bdf8; }
+      .life { stroke: #475569; } .halo { stroke: #0b1220; }
+    }
+    </style>
+  </defs>
+  <rect class="card" x="0.5" y="0.5" width="1009" height="429" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+  <text class="t" x="505" y="34" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">Pricing pipeline: the order in which levers apply</text>
+  <text class="s" x="505" y="54" text-anchor="middle" font-size="11.5" fill="#475569">A pure function price(cart, snapshot) → breakdown; amber steps are the only rounding points</text>
+  <rect class="node" x="40" y="90" width="180" height="74" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="130" y="116" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">0 · Normalize</text>
+  <text class="s" x="130" y="132" text-anchor="middle" font-size="10.5" fill="#475569">merge duplicate SKUs</text>
+  <text class="s" x="130" y="148" text-anchor="middle" font-size="10.5" fill="#475569">sort by SKU code</text>
+  <rect class="node" x="290" y="90" width="180" height="74" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="380" y="116" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">1 · Gift eligibility</text>
+  <text class="s" x="380" y="132" text-anchor="middle" font-size="10.5" fill="#475569">paid quantities and</text>
+  <text class="s" x="380" y="148" text-anchor="middle" font-size="10.5" fill="#475569">gross before discounts</text>
+  <rect class="node" x="540" y="90" width="180" height="74" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="630" y="116" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">2 · Combos</text>
+  <text class="s" x="630" y="132" text-anchor="middle" font-size="10.5" fill="#475569">consume units first</text>
+  <text class="s" x="630" y="148" text-anchor="middle" font-size="10.5" fill="#475569">one COMBO entry each</text>
+  <rect class="node" x="790" y="90" width="180" height="74" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="880" y="116" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">3 · Tiers</text>
+  <text class="s" x="880" y="132" text-anchor="middle" font-size="10.5" fill="#475569">marginal brackets on</text>
+  <text class="s" x="880" y="148" text-anchor="middle" font-size="10.5" fill="#475569">units no combo consumed</text>
+  <rect class="node" x="40" y="230" width="180" height="74" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="130" y="256" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">7 · Total</text>
+  <text class="s" x="130" y="272" text-anchor="middle" font-size="10.5" fill="#475569">Σ net + taxes charged</text>
+  <text class="s" x="130" y="288" text-anchor="middle" font-size="10.5" fill="#475569">never re-rounded (RP-5)</text>
+  <rect class="warn" x="290" y="230" width="180" height="74" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.2"/>
+  <text class="t" x="380" y="256" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">6 · Tax per line</text>
+  <text class="s" x="380" y="272" text-anchor="middle" font-size="10.5" fill="#475569">base × SKU rate</text>
+  <text class="s" x="380" y="288" text-anchor="middle" font-size="10.5" fill="#475569">rounded per line (RP-4)</text>
+  <rect class="node" x="540" y="230" width="180" height="74" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="630" y="256" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">5 · Taxable base</text>
+  <text class="s" x="630" y="272" text-anchor="middle" font-size="10.5" fill="#475569">net + gift reference</text>
+  <text class="s" x="630" y="288" text-anchor="middle" font-size="10.5" fill="#475569">value, per gift policy</text>
+  <rect class="warn" x="790" y="230" width="180" height="74" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.2"/>
+  <text class="t" x="880" y="256" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">4 · Line net</text>
+  <text class="s" x="880" y="272" text-anchor="middle" font-size="10.5" fill="#475569">discounts rounded per</text>
+  <text class="s" x="880" y="288" text-anchor="middle" font-size="10.5" fill="#475569">line (RP-2); net exact</text>
+  <path class="edge" d="M220,127 L287,127" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="255" y="119" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">cart</text>
+  <path class="edge" d="M470,127 L537,127" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="505" y="119" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">gift lines</text>
+  <path class="edge" d="M720,127 L787,127" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="755" y="119" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">units left</text>
+  <path class="edge" d="M880,164 L880,227" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="888" y="200" text-anchor="start" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">line discounts</text>
+  <path class="edge" d="M790,267 L723,267" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="755" y="259" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">net</text>
+  <path class="edge" d="M540,267 L473,267" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="505" y="259" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">base</text>
+  <path class="edge" d="M290,267 L223,267" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="255" y="259" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">tax</text>
+  <rect class="muted" x="40" y="334" width="930" height="36" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="5 4"/>
+  <text class="s" x="505" y="357" text-anchor="middle" font-size="10.5" fill="#475569">8 · Credit evaluation runs outside the engine, in the application layer: advisory at quote, enforced at confirmation</text>
+  <rect class="warn" x="40" y="386" width="14" height="14" rx="3" fill="#fffbeb" stroke="#d97706" stroke-width="1.2"/>
+  <text class="s" x="62" y="397" text-anchor="start" font-size="10.5" fill="#475569">rounding point: currency scale and rounding mode come from the country</text>
+  <text class="s" x="986" y="414" text-anchor="end" font-size="10" fill="#475569">Source: SPEC BR-01 … BR-05, §4 · generated by orderflow-engine-tools</text>
+</svg>
