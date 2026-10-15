@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 660" width="920" height="660" role="img" aria-label="Task progress: 1 of 18 tasks done (6%)" font-family="ui-sans-serif, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <title>Task progress</title>
+  <rect x="0.5" y="0.5" width="919" height="659" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="460" y="34" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">Task progress: 1 of 18 done (6%)</text>
+  <text x="460" y="54" text-anchor="middle" font-size="11.5" fill="#475569">Generated from the task table in HANDOFF.md. Project start 2026-10-13. Planned day vs the day each task was done</text>
+  <rect x="24" y="72" width="872" height="14" rx="7" fill="#f1f5f9" stroke="#cbd5e1"/>
+  <rect x="24" y="72" width="48" height="14" rx="7" fill="#16a34a"/>
+  <text x="24" y="114" font-size="11" font-weight="600" fill="#0369a1">Task</text>
+  <text x="440" y="114" font-size="11" font-weight="600" fill="#0369a1">Planned</text>
+  <text x="520" y="114" font-size="11" font-weight="600" fill="#0369a1">Status</text>
+  <text x="836" y="114" font-size="11" font-weight="600" fill="#0369a1">Done</text>
+  <text x="24" y="144" font-size="11.5" fill="#0f172a"><tspan font-weight="600">T-00</tspan> Specification, governance, README, ADR draft</text>
+  <text x="440" y="144" font-size="11.5" fill="#475569">D1</text>
+  <rect x="520" y="133" width="300" height="14" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
+  <rect x="520" y="133" width="300" height="14" rx="4" fill="#16a34a" stroke="#15803d"/>
+  <text x="528" y="144" font-size="10" fill="#ffffff">done</text>
+  <text x="836" y="144" font-size="11.5" fill="#b45309">D2 (late)</text>
+  <text x="24" y="170" font-size="11.5" fill="#0f172a"><tspan font-weight="600">T-01</tspan> Scaffold API and workspace test command</text>
+  <text x="440" y="170" font-size="11.5" fill="#475569">D1</text>
+  <rect x="520" y="159" width="300" height="14" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="528" y="170" font-size="10" fill="#475569">to do</text>
+  <text x="24" y="196" font-size="11.5" fill="#0f172a"><tspan font-weight="600">T-02</tspan> Money and currency policy</text>
+  <text x="440" y="196" font-size="11.5" fill="#475569">D1</text>
+  <rect x="520" y="185" width="300" height="14" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="528" y="196" font-size="10" fill="#475569">to do</text>
+  <text x="24" y="222" font-size="11.5" fill="#0f172a"><tspan font-weight="600">T-03</tspan> Pricing pipeline and golden harness</text>
+  <text x="440" y="222" font-size="11.5" fill="#475569">D1</text>
+  <rect x="520" y="211" width="300" height="14" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="528" y="222" font-size="10" fill="#475569">to do</text>
+  <text x="24" y="248" font-size="11.5" fill="#0f172a"><tspan font-weight="600">T-04</tspan> Tier discounts</text>
+  <text x="440" y="248" font-size="11.5" fill="#475569">D2</text>
+  <rect x="520" y="237" width="300" height="14" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="528" y="248" font-size="10" fill="#475569">to do</text>
+  <text x="24" y="274" font-size="11.5" fill="#0f172a"><tspan font-weight="600">T-05</tspan> Combos and allocation</text>
+  <text x="440" y="274" font-size="11.5" fill="#475569">D2</text>
+  <rect x="520" y="263" width="300" height="14" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="528" y="274" font-size="10" fill="#475569">to do</text>
+  <text x="24" y="300" font-size="11.5" fill="#0f172a"><tspan font-weight="600">T-06</tspan> Gifts and gift tax policy</text>
+  <text x="440" y="300" font-size="11.5" fill="#475569">D2</text>
+  <rect x="520" y="289" width="300" height="14" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="528" y="300" font-size="10" fill="#475569">to do</text>
+  <text x="24" y="326" font-size="11.5" fill="#0f172a"><tspan font-weight="600">T-07</tspan> Rounding and multi-country</text>
+  <text x="440" y="326" font-size="11.5" fill="#475569">D2</text>
+  <rect x="520" y="315" width="300" height="14" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="528" y="326" font-size="10" fill="#475569">to do</text>
+  <text x="24" y="352" font-size="11.5" fill="#0f172a"><tspan font-weight="600">T-08</tspan> Schema and seed data</text>
+  <text x="440" y="352" font-size="11.5" fill="#475569">D3</text>
+  <rect x="520" y="341" width="300" height="14" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="528" y="352" font-size="10" fill="#475569">to do</text>
+  <text x="24" y="378" font-size="11.5" fill="#0f172a"><tspan font-weight="600">T-09</tspan> Error handling and API i18n</text>
+  <text x="440" y="378" font-size="11.5" fill="#475569">D3</text>
+  <rect x="520" y="367" width="300" height="14" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="528" y="378" font-size="10" fill="#475569">to do</text>
+  <text x="24" y="404" font-size="11.5" fill="#0f172a"><tspan font-weight="600">T-10</tspan> Quote use case and endpoints</text>
+  <text x="440" y="404" font-size="11.5" fill="#475569">D3</text>
+  <rect x="520" y="393" width="300" height="14" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="528" y="404" font-size="10" fill="#475569">to do</text>
+  <text x="24" y="430" font-size="11.5" fill="#0f172a"><tspan font-weight="600">T-11</tspan> Order confirmation</text>
+  <text x="440" y="430" font-size="11.5" fill="#475569">D4</text>
+  <rect x="520" y="419" width="300" height="14" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="528" y="430" font-size="10" fill="#475569">to do</text>
+  <text x="24" y="456" font-size="11.5" fill="#0f172a"><tspan font-weight="600">T-12</tspan> Invariants under concurrency and failure</text>
+  <text x="440" y="456" font-size="11.5" fill="#475569">D4</text>
+  <rect x="520" y="445" width="300" height="14" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="528" y="456" font-size="10" fill="#475569">to do</text>
+  <text x="24" y="482" font-size="11.5" fill="#0f172a"><tspan font-weight="600">T-13</tspan> Order history</text>
+  <text x="440" y="482" font-size="11.5" fill="#475569">D4</text>
+  <rect x="520" y="471" width="300" height="14" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="528" y="482" font-size="10" fill="#475569">to do</text>
+  <text x="24" y="508" font-size="11.5" fill="#0f172a"><tspan font-weight="600">T-14</tspan> Outbox relay</text>
+  <text x="440" y="508" font-size="11.5" fill="#475569">D4</text>
+  <rect x="520" y="497" width="300" height="14" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="528" y="508" font-size="10" fill="#475569">to do</text>
+  <text x="24" y="534" font-size="11.5" fill="#0f172a"><tspan font-weight="600">T-15</tspan> Retention housekeeping</text>
+  <text x="440" y="534" font-size="11.5" fill="#475569">D5</text>
+  <rect x="520" y="523" width="300" height="14" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="528" y="534" font-size="10" fill="#475569">to do</text>
+  <text x="24" y="560" font-size="11.5" fill="#0f172a"><tspan font-weight="600">T-16</tspan> Final documentation and verification</text>
+  <text x="440" y="560" font-size="11.5" fill="#475569">D5</text>
+  <rect x="520" y="549" width="300" height="14" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="528" y="560" font-size="10" fill="#475569">to do</text>
+  <line x1="24" y1="570" x2="896" y2="570" stroke="#dc2626" stroke-width="1.2" stroke-dasharray="6 4"/>
+  <text x="896" y="567" text-anchor="end" font-size="10" fill="#b91c1c">MVP cut line</text>
+  <text x="24" y="586" font-size="11.5" fill="#0f172a"><tspan font-weight="600">T-17</tspan> Order-summary screen (optional)</text>
+  <text x="440" y="586" font-size="11.5" fill="#475569">D5</text>
+  <rect x="520" y="575" width="300" height="14" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="528" y="586" font-size="10" fill="#475569">to do</text>
+  <text x="896" y="644" text-anchor="end" font-size="10" fill="#475569">Generated by orderflow-engine-tools/progress/progress.mjs</text>
+</svg>
