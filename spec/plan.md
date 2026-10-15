@@ -35,6 +35,7 @@ This plan lists every technical decision with its rejected alternatives, and kee
 | DEC-16 | Angular standalone components for the summary screen | Flutter: not installed in the build environment, and the assignment accepts either | SPEC §10 | — |
 | DEC-18 | Documentation governance enforced by `check-docs.mjs`, with no dependencies, in a separate `orderflow-engine-tools` repository that also generates the figures, the progress chart and the ADR in Word and PDF | Manual review only: rules that are not checked decay | P-11 | — |
 | DEC-19 | Relational model in third normal form, no JSON columns. Tenant-scoped composite keys `(tenant_id, id)` and UUIDv7 ids | JSON documents for quotes: not constrainable or queryable per line. Global surrogate keys only: allow cross-tenant references and need re-keying to shard | data-model §7, §9 | 0001 |
+| DEC-20 | The Liquibase changelogs live in `orderflow-engine-api`, the only component that talks to PostgreSQL, and are applied when the service starts. Each changeset has a rollback that `LiquibaseRollbackIT` proves | A separate migration job with a DML-only runtime role: needs a second credential and a different lock for the quote (`SELECT … FOR UPDATE` requires UPDATE privilege). A separate schema repository applied by infra or a submodule: a plain clone of the API would have no schema, so `./mvnw verify` would stop being a single command. A schema image or artifact on GitHub Packages: the build would depend on a registry and its access rules. Both separate repositories split every schema change from the SQL that relies on it | SPEC §0, §11, §12, AC-38 | — |
 
 ## 2. Configuration
 
@@ -48,10 +49,11 @@ This plan lists every technical decision with its rejected alternatives, and kee
 | `app.idempotency.retention` | How long idempotency keys are kept | `24h` |
 | `app.housekeeping.retention` | Retention of expired quotes and `SENT` events | `7d` |
 | `spring.datasource.*` | Database connection, from environment variables only | — (no secret defaults) |
+| `server.port` | HTTP port of the service | `8080` |
 
 The quote TTL, currency scale, rounding mode and gift tax policy are **country data**, not application configuration (P-07).
 
-`orderflow-engine-api/.env.example` mirrors this table, one comment per key and no real secret ([repository-integrity](../governance/repository-integrity.md) §2).
+`orderflow-engine-api/.env.example` mirrors this table, one comment per key and no real secret ([repository-integrity](../governance/repository-integrity.md) §2). A key enters it in the task that wires it (T-01: database connection and port), so it never lists dead configuration (GC-5).
 
 ## 3. Adoption paths
 
@@ -61,6 +63,8 @@ These are not implemented now, because the assignment does not ask for them and 
 |------|-------|-------------------------|-----------------|---------|
 | SonarQube or SonarCloud | Not used | A CI job runs the scanner after `./mvnw verify` and imports `target/site/jacoco/jacoco.xml` | None. The JaCoCo XML report is already produced | The team wants a shared quality dashboard and quality gates on pull requests |
 | GitHub Actions | Verification runs locally, and its output is pasted into each pull request | A workflow runs `./mvnw verify` and `check-docs` on every pull request, and the branch protections require it | None. The commands already exist | The team wants verification enforced by the platform instead of by the pull request body |
+| Migration job and least-privilege roles | Liquibase runs at startup with the database owner's credential | A one-shot migration job runs Liquibase with an owner role before the service starts. The service connects with a DML-only role, and the quote lock of SPEC §7.1 moves to `pg_advisory_xact_lock` | The datasource keys, a grants changeset, the quote lock, and a test that runs as the DML-only role | A deployed environment, more than one replica, or a security review of database privileges |
+| Separate schema repository | The changelogs live with the API, their only owner (DEC-20) | The changelogs move to their own repository, published as a versioned artifact that the API pins and the deployment applies first | A `git mv` of `db/changelog/` (every changelog already has a `logicalFilePath`), a pinned version, and a pipeline step | A second service or team that owns or reads the same schema |
 | PIT in CI | Optional profile `./mvnw -Pmutation verify`, run before each delivery, and the score is recorded in the HANDOFF | A nightly CI job, or `scmMutationCoverage` on the files changed in a pull request. `withHistory` makes the runs incremental | None. Only CI configuration | Mutation runs are wanted on every change, but a full run is too slow for each build |
 
 ## 4. Risk register
