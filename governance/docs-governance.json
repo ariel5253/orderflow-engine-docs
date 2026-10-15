@@ -1,0 +1,181 @@
+{
+  "scanRoots": [
+    "orderflow-engine-api",
+    "orderflow-engine-app",
+    "orderflow-engine-docs",
+    "orderflow-engine-infra",
+    "orderflow-engine-tools",
+    "orderflow-engine-web"
+  ],
+  "excludeDirs": [
+    ".angular",
+    ".git",
+    ".idea",
+    ".mvn",
+    ".venv",
+    ".vscode",
+    "__pycache__",
+    "coverage",
+    "dist",
+    "node_modules",
+    "target"
+  ],
+  "allowed": [
+    "*/README.md",
+    "*/README.es.md",
+    "orderflow-engine-api/docs/adr/*.md",
+    "orderflow-engine-docs/handoff/*.md",
+    "orderflow-engine-docs/spec/*.md",
+    "orderflow-engine-docs/governance/**/*.md"
+  ],
+  "bilingual": [
+    "*/README.md",
+    "*/README.es.md",
+    "orderflow-engine-api/docs/adr/*.md"
+  ],
+  "frontMatter": {
+    "required": [
+      "orderflow-engine-docs/**/*.md",
+      "orderflow-engine-api/docs/**/*.md"
+    ],
+    "exempt": [
+      "*/README.md",
+      "*/README.es.md"
+    ],
+    "keys": [
+      "id",
+      "title",
+      "status",
+      "lang",
+      "pair",
+      "last-reviewed"
+    ],
+    "status": [
+      "draft",
+      "proposed",
+      "accepted",
+      "rejected",
+      "deprecated",
+      "superseded",
+      "template"
+    ]
+  },
+  "indexes": [
+    "orderflow-engine-docs/README.md",
+    "orderflow-engine-docs/README.es.md"
+  ],
+  "adr": {
+    "files": "orderflow-engine-api/docs/adr/[0-9][0-9][0-9][0-9]-*.md",
+    "maxWords": 500
+  },
+  "requiredHeadings": {
+    "orderflow-engine-api/README.md": [
+      "How to run",
+      "Lever order",
+      "Rounding policy",
+      "Consistency model",
+      "Golden tests",
+      "ADR",
+      "Not included",
+      "Repositories"
+    ],
+    "orderflow-engine-api/README.es.md": [
+      "Cómo ejecutarlo",
+      "Orden de las palancas",
+      "Política de redondeo",
+      "Modelo de consistencia",
+      "Golden tests",
+      "ADR",
+      "No incluido",
+      "Repositorios"
+    ],
+    "orderflow-engine-api/docs/adr/0001-order-pricing-and-confirmation.md": [
+      "Decisions and discarded alternatives",
+      "Not implemented, on purpose",
+      "Code review checklist",
+      "Risk and mitigation"
+    ],
+    "orderflow-engine-api/docs/adr/0001-order-pricing-and-confirmation.es.md": [
+      "Decisiones y alternativas descartadas",
+      "No implementado, a propósito",
+      "Qué revisaría en un code review",
+      "Riesgo y mitigación"
+    ]
+  },
+  "integrity": {
+    "gitignore": {
+      "common": [
+        ".env",
+        ".DS_Store",
+        "Thumbs.db",
+        ".idea/",
+        ".vscode/"
+      ]
+    },
+    "dockerignore": {
+      "common": [
+        ".env",
+        ".git"
+      ]
+    },
+    "gitattributes": [
+      "* text=auto eol=lf",
+      "*.cmd text eol=crlf",
+      "*.bat text eol=crlf",
+      "*.ps1 text eol=crlf",
+      "*.pdf binary",
+      "*.docx binary",
+      "*.png binary",
+      "*.jpg binary"
+    ],
+    "binaryExtensions": [
+      ".pdf",
+      ".docx",
+      ".png",
+      ".jpg",
+      ".jpeg",
+      ".ico",
+      ".jar"
+    ],
+    "repositories": {
+      "orderflow-engine-api": {
+        "gitignore": [
+          "target/"
+        ],
+        "dockerignore": [
+          "target/"
+        ],
+        "envExample": true
+      },
+      "orderflow-engine-web": {
+        "gitignore": [
+          "node_modules/",
+          "dist/",
+          ".angular/"
+        ],
+        "dockerignore": [
+          "node_modules/",
+          "dist/"
+        ],
+        "envExample": true
+      },
+      "orderflow-engine-tools": {
+        "gitignore": [
+          "__pycache__/",
+          ".venv/"
+        ],
+        "dockerignore": [
+          "__pycache__/",
+          ".venv/"
+        ],
+        "envExample": false
+      },
+      "orderflow-engine-infra": {
+        "envExample": true,
+        "mayReferenceSiblings": true
+      },
+      "orderflow-engine-docs": {},
+      "orderflow-engine-app": {}
+    }
+  }
+}
