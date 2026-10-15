@@ -96,12 +96,12 @@ These are the risky edges. A reviewer should check each one in the task that own
   - `Application.java`, `application.yml` (every connection value from environment variables), `db/changelog/db.changelog-master.yaml`
   - `Dockerfile`: a multi-stage build with the Maven Wrapper on JDK 21, run on a Java 21 runtime image as a non-root user
   - `compose.yaml`: the service and PostgreSQL with a healthcheck. The service starts once the database is healthy. Values come from `.env` when it exists, with the `.env.example` values as defaults, so a fresh clone starts without one
-  - `.env.example`: mirrors the configuration table of [plan](plan.md) §2, one comment per key, no real secret
+  - `.env.example`: the rows of the configuration table of [plan](plan.md) §2 that T-01 wires (database connection and port), one comment per key, no real secret. Later tasks add their own keys
   - `.dockerignore`
   - `DomainPurityArchTest`, `HealthIT`
 - **Files (`orderflow-engine-infra`):**
   - `compose.yaml`: the full stack, built from the sibling repositories cloned side by side (database and API; the web screen joins in T-17)
-  - `.env.example`: keys only, one comment per key
+  - `.env.example`: every key with its non-secret local default and `change-me` for the password, one comment per key ([repository-integrity](../governance/repository-integrity.md) §2)
   - `scripts/test-all.sh`, `scripts/test-all.ps1`: API verify, documentation check and integrity check
 - **Verify:** `./mvnw verify` → green, and `node orderflow-engine-tools/integrity/check-integrity.mjs` → OK.
 - **Done when:**
@@ -158,13 +158,14 @@ These are the risky edges. A reviewer should check each one in the task that own
 
 ### T-08: Schema and seed data
 - **Covers:** AC-10, SPEC §5.
-- **Files:** `db/changelog/2026/2026-10-NN-00{1…5}-*.yaml` (tenancy and catalog, levers, credit, quotes and orders, idempotency and outbox), `…-006-seed-co-and-ec.yaml`, `PriceScaleValidationIT`, `SchemaConstraintsIT`.
+- **Files:** `db/changelog/2026/2026-10-NN-00{1…5}-*.yaml` (tenancy and catalog, levers, credit, quotes and orders, idempotency and outbox), `…-006-seed-co-and-ec.yaml`, each with a rollback and a `logicalFilePath` and included explicitly by the master changelog; `PriceScaleValidationIT`, `SchemaConstraintsIT`, `LiquibaseRollbackIT`.
 - **Tests (`SchemaConstraintsIT`):**
   - composite tenant FKs reject cross-tenant references
   - `UNIQUE (tenant_id, quote_id)` on orders
   - the order FK pins `customer_id` to the quote
   - the credit `CHECK` holds
   - a confirmed quote cannot be deleted
+- **Tests (`LiquibaseRollbackIT`):** update, roll back to an empty schema, update again, on Testcontainers PostgreSQL. Proven once with a changeset whose rollback is wrong (DEC-20).
 - **Commit:** `feat(db): add normalized schema and seeds (T-08)`
 
 ### T-09: Error handling and API i18n

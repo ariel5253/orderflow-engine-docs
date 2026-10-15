@@ -409,7 +409,7 @@ Topology, flows and figures are in [architecture.md](architecture.md). Technical
   | `config` | Wiring and typed configuration | everything |
 
 - `@Transactional` appears only on application use cases. No remote call is made inside a transaction.
-- Liquibase changelogs live in `db/changelog/YYYY/YYYY-MM-DD-NNN-verb-object.yaml`, each with a rollback.
+- Liquibase changelogs live in `db/changelog/YYYY/YYYY-MM-DD-NNN-verb-object.yaml`, each with a rollback and a `logicalFilePath`, so the files can move without being applied again. The master changelog includes them explicitly, in order (DEC-20).
 - Observability:
   - logs with `correlationId`
   - actuator `health`

@@ -33,7 +33,7 @@ last-reviewed: 2026-10-14
 | `.env` is never versioned | Every `.gitignore` lists `.env`. Once a repository is under git, the check also fails if git tracks a `.env`. The content of a local `.env` is never scanned: it is the one place where real values live |
 | `.env` never enters an image | Every `.dockerignore` lists `.env` |
 | `.env.example` is versioned where a repository runs with configuration | It lists every key, each preceded by a comment line. A secret key is empty or `change-me`. Other keys may carry their non-secret local default. Never a real secret |
-| One source for the API configuration keys | The API's `.env.example` mirrors the configuration table in [plan.md](../spec/plan.md) §2 |
+| One source for the API configuration keys | Every key in the API's `.env.example` comes from the configuration table in [plan.md](../spec/plan.md) §2, and enters it in the task that wires it |
 
 ## 3. Required ignore entries
 
