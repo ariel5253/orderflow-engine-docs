@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1160 820" width="1160" height="820" role="img" aria-label="Confirmation sequence: within one transaction the use case inserts the idempotency key, locks and validates the quote, consumes credit, inserts the order and the outbox events and stores the response; the controller returns 201 only after COMMIT; later the relay claims events and calls push and the ERP outside any transaction." font-family="ui-sans-serif, system-ui, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif">
+  <title>Confirmation: one transaction, and the reply only after commit</title>
+  <desc>Locks are always taken in the same order: idempotency key → quote → credit account</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ea" d="M0,0 L10,4 L0,8 z" fill="#475569"/></marker><marker id="abad" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="eabad" d="M0,0 L10,4 L0,8 z" fill="#dc2626"/></marker><marker id="atx" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="eatx" d="M0,0 L10,4 L0,8 z" fill="#16a34a"/></marker><marker id="akey" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="eakey" d="M0,0 L10,4 L0,8 z" fill="#0284c7"/></marker>
+    <style>
+    @media (prefers-color-scheme: dark) {
+      .card { fill: #0b1220; stroke: #1e293b; } .group { fill: #0f172a; stroke: #334155; }
+      .node { fill: #111a2e; stroke: #475569; } .key { fill: #0c3a52; stroke: #38bdf8; }
+      .tx { fill: #052e1a; stroke: #22c55e; } .warn { fill: #3a2a06; stroke: #f59e0b; }
+      .muted { fill: #0f172a; stroke: #475569; } .note { fill: #131c2e; stroke: #475569; }
+      .bad { fill: #3b0d0d; stroke: #f87171; }
+      .t { fill: #e2e8f0; } .s { fill: #94a3b8; } .txt { fill: #4ade80; } .warnt { fill: #fbbf24; }
+      .badt { fill: #f87171; } .keyt { fill: #38bdf8; }
+      .edge { stroke: #94a3b8; } .ea { fill: #94a3b8; } .edgebad { stroke: #f87171; } .eabad { fill: #f87171; }
+      .edgetx { stroke: #4ade80; } .eatx { fill: #4ade80; } .edgekey { stroke: #38bdf8; } .eakey { fill: #38bdf8; }
+      .life { stroke: #475569; } .halo { stroke: #0b1220; }
+    }
+    </style>
+  </defs>
+  <rect class="card" x="0.5" y="0.5" width="1159" height="819" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+  <text class="t" x="580" y="34" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">Confirmation: one transaction, and the reply only after commit</text>
+  <text class="s" x="580" y="54" text-anchor="middle" font-size="11.5" fill="#475569">Locks are always taken in the same order: idempotency key → quote → credit account</text>
+  <rect class="node" x="15" y="74" width="170" height="44" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="100" y="92.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Client</text>
+  <text class="s" x="100" y="108.5" text-anchor="middle" font-size="10.5" fill="#475569">shopkeeper app</text>
+  <line class="life" x1="100" y1="118" x2="100" y2="690" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+  <rect class="node" x="205" y="74" width="170" height="44" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="290" y="92.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">OrderController</text>
+  <text class="s" x="290" y="108.5" text-anchor="middle" font-size="10.5" fill="#475569">web adapter</text>
+  <line class="life" x1="290" y1="118" x2="290" y2="690" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+  <rect class="key" x="415" y="74" width="170" height="44" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.2"/>
+  <text class="t" x="500" y="92.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">ConfirmOrderUseCase</text>
+  <text class="s" x="500" y="108.5" text-anchor="middle" font-size="10.5" fill="#475569">application</text>
+  <line class="life" x1="500" y1="118" x2="500" y2="690" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+  <rect class="node" x="735" y="74" width="170" height="44" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="820" y="92.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">PostgreSQL</text>
+  <text class="s" x="820" y="108.5" text-anchor="middle" font-size="10.5" fill="#475569">single source of truth</text>
+  <line class="life" x1="820" y1="118" x2="820" y2="690" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+  <rect class="node" x="965" y="74" width="170" height="44" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="1050" y="92.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">OutboxRelay</text>
+  <text class="s" x="1050" y="108.5" text-anchor="middle" font-size="10.5" fill="#475569">scheduled job</text>
+  <line class="life" x1="1050" y1="118" x2="1050" y2="690" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+  <path class="edge" d="M100,150 L287,150" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="195" y="143" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">POST /orders · Idempotency-Key</text>
+  <path class="edge" d="M290,186 L497,186" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="395" y="179" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">confirm(quoteId, key)</text>
+  <rect class="tx" x="420" y="204" width="490" height="268" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.2"/>
+  <text class="txt" x="436" y="224" text-anchor="start" font-size="11" font-weight="600" fill="#15803d">BEGIN — one ACID transaction</text>
+  <path class="edge" d="M500,254 L817,254" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="660" y="247" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">1 · insert idempotency key, on conflict do nothing</text>
+  <path class="edge" d="M500,288 L817,288" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="660" y="281" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">2 · select quote for update · no order, not expired</text>
+  <path class="edge" d="M500,322 L817,322" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="660" y="315" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">3 · conditional credit update (CREDIT only)</text>
+  <path class="edge" d="M500,356 L817,356" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="660" y="349" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">4 · insert order row, then the ledger row</text>
+  <path class="edge" d="M500,390 L817,390" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="660" y="383" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">5 · insert outbox events: PUSH, ERP</text>
+  <path class="edge" d="M500,424 L817,424" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="660" y="417" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">6 · store order id and response on the key</text>
+  <path class="edgetx" d="M500,458 L817,458" fill="none" stroke="#16a34a" stroke-width="2" marker-end="url(#atx)"/>
+  <text class="txt halo" x="660" y="451" text-anchor="middle" font-size="10.5" font-weight="600" fill="#15803d" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">7 · COMMIT</text>
+  <path class="edge" d="M500,504 L293,504" fill="none" stroke="#475569" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#a)"/>
+  <text class="s halo" x="395" y="497" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">order (committed)</text>
+  <path class="edge" d="M290,540 L103,540" fill="none" stroke="#475569" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#a)"/>
+  <text class="t halo" x="195" y="533" text-anchor="middle" font-size="10.5" font-weight="600" fill="#0f172a" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">201 Created · Location</text>
+  <line class="life" x1="40" y1="566" x2="1120" y2="566" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2 4"/>
+  <text class="keyt halo" x="580" y="584" text-anchor="middle" font-size="11" font-weight="600" fill="#0369a1" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">Later, asynchronously</text>
+  <path class="edge" d="M1050,616 L823,616" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="935" y="609" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">claim due events with a lease</text>
+  <path class="edge" d="M1050,636 L1006,636 L1006,654 L1046,654" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="998" y="649" text-anchor="end" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">call push / ERP</text>
+  <path class="edge" d="M1050,682 L823,682" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="935" y="675" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">mark SENT · or retry · or DEAD</text>
+  <rect class="note" x="40" y="706" width="340" height="70" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text class="t" x="54" y="728" text-anchor="start" font-size="11.5" font-weight="600" fill="#0f172a">I-201</text>
+  <text class="s" x="54" y="747" text-anchor="start" font-size="10.5" fill="#475569">The 201 is serialized only after COMMIT returns,</text>
+  <text class="s" x="54" y="763" text-anchor="start" font-size="10.5" fill="#475569">so every order number points to a committed row.</text>
+  <rect class="note" x="410" y="706" width="340" height="70" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text class="t" x="424" y="728" text-anchor="start" font-size="11.5" font-weight="600" fill="#0f172a">Failures are not cached</text>
+  <text class="s" x="424" y="747" text-anchor="start" font-size="10.5" fill="#475569">Any error rolls back everything, including the key;</text>
+  <text class="s" x="424" y="763" text-anchor="start" font-size="10.5" fill="#475569">the client can fix the cause and retry.</text>
+  <rect class="note" x="780" y="706" width="340" height="70" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text class="t" x="794" y="728" text-anchor="start" font-size="11.5" font-weight="600" fill="#0f172a">At-least-once effects</text>
+  <text class="s" x="794" y="747" text-anchor="start" font-size="10.5" fill="#475569">A crash after the call re-sends after the lease;</text>
+  <text class="s" x="794" y="763" text-anchor="start" font-size="10.5" fill="#475569">consumers dedupe by event_id.</text>
+  <text class="s" x="1136" y="804" text-anchor="end" font-size="10" fill="#475569">Source: SPEC §7 · data-model §8 · api-contract E-03 · generated by orderflow-engine-tools</text>
+</svg>

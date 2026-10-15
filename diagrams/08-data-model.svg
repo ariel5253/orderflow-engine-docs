@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1160 680" width="1160" height="680" role="img" aria-label="Data model: reference tables (currencies, countries, tenants), tenant catalog and levers, credit, insert-only quotes with lines and discount components, thin orders that reference their quote and store no amount, idempotency keys and outbox events." font-family="ui-sans-serif, system-ui, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif">
+  <title>Data model: 19 tables in third normal form, no JSON</title>
+  <desc>Arrows point from the referencing table to the referenced one; amber labels are UNIQUE constraints</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ea" d="M0,0 L10,4 L0,8 z" fill="#475569"/></marker><marker id="abad" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="eabad" d="M0,0 L10,4 L0,8 z" fill="#dc2626"/></marker><marker id="atx" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="eatx" d="M0,0 L10,4 L0,8 z" fill="#16a34a"/></marker><marker id="akey" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="eakey" d="M0,0 L10,4 L0,8 z" fill="#0284c7"/></marker>
+    <style>
+    @media (prefers-color-scheme: dark) {
+      .card { fill: #0b1220; stroke: #1e293b; } .group { fill: #0f172a; stroke: #334155; }
+      .node { fill: #111a2e; stroke: #475569; } .key { fill: #0c3a52; stroke: #38bdf8; }
+      .tx { fill: #052e1a; stroke: #22c55e; } .warn { fill: #3a2a06; stroke: #f59e0b; }
+      .muted { fill: #0f172a; stroke: #475569; } .note { fill: #131c2e; stroke: #475569; }
+      .bad { fill: #3b0d0d; stroke: #f87171; }
+      .t { fill: #e2e8f0; } .s { fill: #94a3b8; } .txt { fill: #4ade80; } .warnt { fill: #fbbf24; }
+      .badt { fill: #f87171; } .keyt { fill: #38bdf8; }
+      .edge { stroke: #94a3b8; } .ea { fill: #94a3b8; } .edgebad { stroke: #f87171; } .eabad { fill: #f87171; }
+      .edgetx { stroke: #4ade80; } .eatx { fill: #4ade80; } .edgekey { stroke: #38bdf8; } .eakey { fill: #38bdf8; }
+      .life { stroke: #475569; } .halo { stroke: #0b1220; }
+    }
+    </style>
+  </defs>
+  <rect class="card" x="0.5" y="0.5" width="1159" height="679" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+  <text class="t" x="580" y="34" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">Data model: 19 tables in third normal form, no JSON</text>
+  <text class="s" x="580" y="54" text-anchor="middle" font-size="11.5" fill="#475569">Arrows point from the referencing table to the referenced one; amber labels are UNIQUE constraints</text>
+  <rect class="group" x="26" y="70" width="248" height="500" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text class="s" x="40" y="90" text-anchor="start" font-size="11" font-weight="600" fill="#475569">Reference, tenancy, credit</text>
+  <rect class="group" x="296" y="70" width="248" height="500" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text class="s" x="310" y="90" text-anchor="start" font-size="11" font-weight="600" fill="#475569">Catalog and levers</text>
+  <rect class="group" x="586" y="70" width="248" height="500" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text class="s" x="600" y="90" text-anchor="start" font-size="11" font-weight="600" fill="#475569">Quotes and orders</text>
+  <rect class="group" x="886" y="70" width="248" height="500" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text class="s" x="900" y="90" text-anchor="start" font-size="11" font-weight="600" fill="#475569">Idempotency and effects</text>
+  <rect class="node" x="40" y="104" width="220" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="150" y="128.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">currencies</text>
+  <text class="s" x="150" y="144.5" text-anchor="middle" font-size="10.5" fill="#475569">code · scale</text>
+  <rect class="node" x="40" y="190" width="220" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="150" y="214.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">countries</text>
+  <text class="s" x="150" y="230.5" text-anchor="middle" font-size="10.5" fill="#475569">currency · rounding · gift · TTL</text>
+  <rect class="node" x="40" y="276" width="220" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="150" y="300.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">tenants</text>
+  <text class="s" x="150" y="316.5" text-anchor="middle" font-size="10.5" fill="#475569">UNIQUE (country, brand)</text>
+  <rect class="node" x="40" y="362" width="220" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="150" y="386.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">customers</text>
+  <text class="s" x="150" y="402.5" text-anchor="middle" font-size="10.5" fill="#475569">PK (tenant_id, id)</text>
+  <rect class="key" x="40" y="448" width="220" height="56" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.2"/>
+  <text class="t" x="150" y="472.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">credit_accounts</text>
+  <text class="s" x="150" y="488.5" text-anchor="middle" font-size="10.5" fill="#475569">CHECK consumed ≤ limit</text>
+  <rect class="node" x="310" y="104" width="220" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="420" y="128.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">families</text>
+  <text class="s" x="420" y="144.5" text-anchor="middle" font-size="10.5" fill="#475569">PK (tenant_id, code)</text>
+  <rect class="node" x="310" y="190" width="220" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="420" y="214.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">products</text>
+  <text class="s" x="420" y="230.5" text-anchor="middle" font-size="10.5" fill="#475569">sku · name · tax_rate · list_price</text>
+  <rect class="node" x="310" y="276" width="220" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="420" y="300.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">tier_rules · tier_brackets</text>
+  <text class="s" x="420" y="316.5" text-anchor="middle" font-size="10.5" fill="#475569">SKU or family target</text>
+  <rect class="node" x="310" y="362" width="220" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="420" y="386.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">combo_rules · combo_items</text>
+  <text class="s" x="420" y="402.5" text-anchor="middle" font-size="10.5" fill="#475569">combo price · min quantities</text>
+  <rect class="node" x="310" y="448" width="220" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="420" y="472.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">gift_rules</text>
+  <text class="s" x="420" y="488.5" text-anchor="middle" font-size="10.5" fill="#475569">trigger · gift product · qty</text>
+  <rect class="key" x="600" y="104" width="220" height="56" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.2"/>
+  <text class="t" x="710" y="128.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">quotes</text>
+  <text class="s" x="710" y="144.5" text-anchor="middle" font-size="10.5" fill="#475569">customer · currency · expires_at</text>
+  <rect class="key" x="600" y="190" width="220" height="56" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.2"/>
+  <text class="t" x="710" y="214.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">quote_lines</text>
+  <text class="s" x="710" y="230.5" text-anchor="middle" font-size="10.5" fill="#475569">unit_price · tax_rate · base · tax</text>
+  <rect class="key" x="600" y="276" width="220" height="56" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.2"/>
+  <text class="t" x="710" y="300.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">quote_line_adjustments</text>
+  <text class="s" x="710" y="316.5" text-anchor="middle" font-size="10.5" fill="#475569">kind TIER | COMBO · rule_id</text>
+  <rect class="key" x="600" y="390" width="220" height="64" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.2"/>
+  <text class="t" x="710" y="411" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">orders</text>
+  <text class="s" x="710" y="427" text-anchor="middle" font-size="10.5" fill="#475569">number · confirmed_at</text>
+  <text class="s" x="710" y="443" text-anchor="middle" font-size="10.5" fill="#475569">no breakdown amounts</text>
+  <rect class="key" x="600" y="490" width="220" height="56" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.2"/>
+  <text class="t" x="710" y="514.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">credit_ledger</text>
+  <text class="s" x="710" y="530.5" text-anchor="middle" font-size="10.5" fill="#475569">amount · append-only</text>
+  <rect class="node" x="900" y="104" width="220" height="64" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="1010" y="125" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">idempotency_keys</text>
+  <text class="s" x="1010" y="141" text-anchor="middle" font-size="10.5" fill="#475569">PK (tenant, customer, key)</text>
+  <text class="s" x="1010" y="157" text-anchor="middle" font-size="10.5" fill="#475569">request_hash · response</text>
+  <rect class="node" x="900" y="236" width="220" height="84" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="1010" y="259.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">outbox_events</text>
+  <text class="s" x="1010" y="275.5" text-anchor="middle" font-size="10.5" fill="#475569">UNIQUE (order, destination)</text>
+  <text class="s" x="1010" y="291.5" text-anchor="middle" font-size="10.5" fill="#475569">PENDING · SENT · DEAD</text>
+  <text class="s" x="1010" y="307.5" text-anchor="middle" font-size="10.5" fill="#475569">attempts · lease</text>
+  <path class="edge" d="M150,190 L150,163" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="158" y="181" text-anchor="start" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">currency_code</text>
+  <path class="edge" d="M150,276 L150,249" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="158" y="267" text-anchor="start" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">country_code</text>
+  <path class="edge" d="M150,448 L150,421" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="158" y="439" text-anchor="start" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">customer_id</text>
+  <path class="edge" d="M420,190 L420,163" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="428" y="181" text-anchor="start" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">family_code</text>
+  <path class="edge" d="M530,304 L550,304 L550,232 L533,232" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <path class="edge" d="M530,390 L550,390 L550,304" fill="none" stroke="#475569" stroke-width="1.4"/>
+  <path class="edge" d="M530,476 L550,476 L550,390" fill="none" stroke="#475569" stroke-width="1.4"/>
+  <text class="s halo" x="546" y="440" text-anchor="end" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">product_id</text>
+  <path class="edge" d="M600,206 L533,206" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="566" y="198" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">product_id</text>
+  <path class="edge" d="M710,190 L710,163" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="718" y="181" text-anchor="start" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">quote_id</text>
+  <path class="edge" d="M710,276 L710,249" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="718" y="267" text-anchor="start" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">quote_id · line_no</text>
+  <path class="edge" d="M820,402 L840,402 L840,132 L823,132" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="warnt halo" x="834" y="368" text-anchor="end" font-size="10.5" font-weight="600" fill="#b45309" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">quote_id · UNIQUE</text>
+  <path class="edge" d="M710,490 L710,457" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="warnt halo" x="718" y="481" text-anchor="start" font-size="10.5" font-weight="600" fill="#b45309" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">order_id · UNIQUE</text>
+  <path class="edge" d="M900,150 L870,150 L870,424 L823,424" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="875" y="210" text-anchor="start" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">order_id</text>
+  <path class="edge" d="M900,300 L885,300 L885,446 L823,446" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="890" y="345" text-anchor="start" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">order_id</text>
+  <text class="s" x="40" y="600" text-anchor="start" font-size="10.5" fill="#475569">Every tenant-scoped table is keyed by (tenant_id, id) and references tenants (not drawn). quotes and orders reference customers; the order FK pins customer_id to its quote.</text>
+  <text class="s" x="40" y="620" text-anchor="start" font-size="10.5" fill="#475569">The order stores no breakdown amount: its lines are the quote lines, so quote and order cannot diverge.</text>
+  <text class="s" x="1136" y="664" text-anchor="end" font-size="10" fill="#475569">Source: data-model.md · Liquibase changelogs in orderflow-engine-api · generated by orderflow-engine-tools</text>
+</svg>

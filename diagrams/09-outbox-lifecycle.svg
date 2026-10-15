@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 470" width="1000" height="470" role="img" aria-label="Outbox lifecycle: an event is written as PENDING in the order transaction; the relay leases it with FOR UPDATE SKIP LOCKED; success sets SENT; a retryable failure or an expired lease leaves it PENDING with backoff; a non-retryable failure or the last attempt sets DEAD; operations can requeue a DEAD event." font-family="ui-sans-serif, system-ui, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif">
+  <title>Outbox lifecycle: at-least-once delivery, consumers deduplicate</title>
+  <desc>Status is PENDING, SENT or DEAD; a lease (locked_until) marks the event being sent</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ea" d="M0,0 L10,4 L0,8 z" fill="#475569"/></marker><marker id="abad" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="eabad" d="M0,0 L10,4 L0,8 z" fill="#dc2626"/></marker><marker id="atx" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="eatx" d="M0,0 L10,4 L0,8 z" fill="#16a34a"/></marker><marker id="akey" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="eakey" d="M0,0 L10,4 L0,8 z" fill="#0284c7"/></marker>
+    <style>
+    @media (prefers-color-scheme: dark) {
+      .card { fill: #0b1220; stroke: #1e293b; } .group { fill: #0f172a; stroke: #334155; }
+      .node { fill: #111a2e; stroke: #475569; } .key { fill: #0c3a52; stroke: #38bdf8; }
+      .tx { fill: #052e1a; stroke: #22c55e; } .warn { fill: #3a2a06; stroke: #f59e0b; }
+      .muted { fill: #0f172a; stroke: #475569; } .note { fill: #131c2e; stroke: #475569; }
+      .bad { fill: #3b0d0d; stroke: #f87171; }
+      .t { fill: #e2e8f0; } .s { fill: #94a3b8; } .txt { fill: #4ade80; } .warnt { fill: #fbbf24; }
+      .badt { fill: #f87171; } .keyt { fill: #38bdf8; }
+      .edge { stroke: #94a3b8; } .ea { fill: #94a3b8; } .edgebad { stroke: #f87171; } .eabad { fill: #f87171; }
+      .edgetx { stroke: #4ade80; } .eatx { fill: #4ade80; } .edgekey { stroke: #38bdf8; } .eakey { fill: #38bdf8; }
+      .life { stroke: #475569; } .halo { stroke: #0b1220; }
+    }
+    </style>
+  </defs>
+  <rect class="card" x="0.5" y="0.5" width="999" height="469" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+  <text class="t" x="500" y="34" text-anchor="middle" font-size="15" font-weight="600" fill="#0f172a">Outbox lifecycle: at-least-once delivery, consumers deduplicate</text>
+  <text class="s" x="500" y="54" text-anchor="middle" font-size="11.5" fill="#475569">Status is PENDING, SENT or DEAD; a lease (locked_until) marks the event being sent</text>
+  <circle class="ea" cx="62" cy="190" r="8" fill="#475569"/>
+  <rect class="node" x="140" y="162" width="180" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text class="t" x="230" y="186.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">PENDING</text>
+  <text class="s" x="230" y="202.5" text-anchor="middle" font-size="10.5" fill="#475569">waits for next_attempt_at</text>
+  <rect class="key" x="450" y="162" width="180" height="56" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.2"/>
+  <text class="t" x="540" y="186.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">PENDING · leased</text>
+  <text class="s" x="540" y="202.5" text-anchor="middle" font-size="10.5" fill="#475569">locked_until &gt; now</text>
+  <rect class="tx" x="770" y="162" width="180" height="56" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.2"/>
+  <text class="t" x="860" y="186.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">SENT</text>
+  <text class="s" x="860" y="202.5" text-anchor="middle" font-size="10.5" fill="#475569">delivered</text>
+  <rect class="bad" x="450" y="330" width="180" height="56" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.2"/>
+  <text class="t" x="540" y="354.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">DEAD</text>
+  <text class="s" x="540" y="370.5" text-anchor="middle" font-size="10.5" fill="#475569">counted in outbox_dead</text>
+  <path class="edge" d="M70,190 L137,190" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="40" y="136" text-anchor="start" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">written in the</text>
+  <text class="s halo" x="40" y="150" text-anchor="start" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">order transaction</text>
+  <path class="edge" d="M320,182 L447,182" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="384" y="174" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">claim · SKIP LOCKED</text>
+  <path class="edge" d="M630,190 L767,190" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="698" y="182" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">gateway OK → SENT</text>
+  <path class="edge" d="M540,162 L540,118 L230,118 L230,159" fill="none" stroke="#475569" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#a)"/>
+  <text class="s halo" x="385" y="110" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">retryable failure or expired lease · attempts + 1 · backoff with jitter</text>
+  <path class="edge" d="M540,218 L540,327" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#a)"/>
+  <text class="s halo" x="548" y="276" text-anchor="start" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">non-retryable error</text>
+  <text class="s halo" x="548" y="290" text-anchor="start" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">or last attempt</text>
+  <path class="edge" d="M450,358 L230,358 L230,221" fill="none" stroke="#475569" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#a)"/>
+  <text class="s halo" x="340" y="350" text-anchor="middle" font-size="10.5" fill="#475569" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke">manual requeue (operations)</text>
+  <rect class="note" x="680" y="300" width="280" height="104" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text class="t" x="694" y="322" text-anchor="start" font-size="11.5" font-weight="600" fill="#0f172a">Why nothing is lost or duplicated</text>
+  <text class="s" x="694" y="341" text-anchor="start" font-size="10.5" fill="#475569">The call happens under the lease, outside</text>
+  <text class="s" x="694" y="357" text-anchor="start" font-size="10.5" fill="#475569">any database transaction. A crash re-sends</text>
+  <text class="s" x="694" y="373" text-anchor="start" font-size="10.5" fill="#475569">after the lease; consumers dedupe by</text>
+  <text class="s" x="694" y="389" text-anchor="start" font-size="10.5" fill="#475569">event_id (push collapse id, ERP upsert).</text>
+  <text class="s" x="976" y="454" text-anchor="end" font-size="10" fill="#475569">Source: SPEC §7.4 · data-model §5 · generated by orderflow-engine-tools</text>
+</svg>
