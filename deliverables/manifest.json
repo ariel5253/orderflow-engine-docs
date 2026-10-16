@@ -3,7 +3,7 @@
   "documents": [
     {
       "source": "orderflow-engine-api/docs/adr/0001-order-pricing-and-confirmation.md",
-      "sha256": "2c54aa1e041ee075966433fd199c742e757133ec200c7ca9f95e467ff2de456f",
+      "sha256": "67ba19e40fbbaf3cb5c88c50535921c6ec52614f521f41e89d4b1f03b3f9747c",
       "outputs": [
         "adr/0001-order-pricing-and-confirmation.docx",
         "adr/0001-order-pricing-and-confirmation.pdf"
@@ -12,7 +12,7 @@
     },
     {
       "source": "orderflow-engine-api/docs/adr/0001-order-pricing-and-confirmation.es.md",
-      "sha256": "5435a2f8c61a8592899ec8b2d23b9a52f4a836b16c3480e20f4b8a8771e2cb08",
+      "sha256": "61eed5a1f3f5fc210f3f2c218f5a212c02735780b4c0e4d4ed8bf4a2e76a8931",
       "outputs": [
         "adr/0001-order-pricing-and-confirmation.es.docx",
         "adr/0001-order-pricing-and-confirmation.es.pdf"
