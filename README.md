@@ -44,7 +44,7 @@ A document that is not listed here does not exist (see the [documentation rules]
 | ID | Document | Question it answers | Language | Status |
 |----|----------|---------------------|----------|--------|
 | README-API | `orderflow-engine-api/README.md` | How is it run, and what are the lever order, rounding policy and consistency model? | en, es | accepted |
-| ADR-0001 | `orderflow-engine-api/docs/adr/0001-order-pricing-and-confirmation.md` | Which decisions were taken, what was left out, what to review, which risk remains? | en, es | proposed |
+| ADR-0001 | `orderflow-engine-api/docs/adr/0001-order-pricing-and-confirmation.md` | Which decisions were taken, what was left out, what to review, which risk remains? | en, es | accepted |
 | HANDOFF | [Handoff](handoff/HANDOFF.md) | Where does the work stand, and how do I pick it up? | en | accepted |
 | CONSTITUTION | [Constitution](spec/constitution.md) | Which principles are non-negotiable, and how is each verified? | en | accepted |
 | SPEC | [Specification](spec/SPEC.md) | What must the system do, and how is each rule verified? | en | accepted |
@@ -62,7 +62,7 @@ A document that is not listed here does not exist (see the [documentation rules]
 | GOV-002 | [Check configuration](governance/docs-governance.json) | Which paths, pairs, headings and limits does the check enforce? | en | accepted |
 | TPL-ADR | [ADR template](governance/templates/adr-template.md) | How is an architecture decision recorded? | en | template |
 | TPL-DOC | [Document template](governance/templates/doc-template.md) | How does a new document start? | en | template |
-| README-WEB | `orderflow-engine-web/README.md` | What is the screen, and how is it run? | en, es | planned |
+| README-WEB | `orderflow-engine-web/README.md` | What does the web client show, how is it run, and how does it prevent the three defects? | en, es | planned |
 | README-INFRA | `orderflow-engine-infra/README.md` | How is the full stack started, and how are all tests run? | en, es | planned |
 | README-TOOLS | `orderflow-engine-tools/README.md` | What does each tool generate or check, and how is it run? | en, es | accepted |
 | README-APP | `orderflow-engine-app/README.md` | Why is this folder reserved? | en, es | reserved |
@@ -81,10 +81,10 @@ Documents cite each other by code, not by page. Every code family has a distinct
 | `I-201` | The 201 invariant | SPEC §7.2 |
 | `GT-01`…`GT-06` | The six golden tests of the assignment | SPEC §11 |
 | `A-01`…`A-10` | Assumptions | SPEC §13 |
-| `AC-01`…`AC-48` | Acceptance criteria. Removed rows keep their gap | SPEC §14.2 |
+| `AC-01`…`AC-53` | Acceptance criteria. Removed rows keep their gap | SPEC §14.2 |
 | `DEC-…`, `RISK-…` | Technical decisions, risks | plan |
-| `T-00`…`T-17`, `GC-…`, `RF-…` | Tasks, global constraints, review focus | TASKS |
-| `E-01`…`E-06`, `BD-…`, `GAP-…` | Operation cards, behavior decisions, known gaps | api-contract |
+| `T-00`…`T-18`, `GC-…`, `RF-…` | Tasks, global constraints, review focus | TASKS |
+| `E-01`…`E-07`, `BD-…`, `GAP-…` | Operation cards, behavior decisions, known gaps | api-contract |
 | `DM-…` | Data-model notes | data-model |
 | `ADR-0001` | The architecture decision record | `orderflow-engine-api/docs/adr/` |
 | `DR-1`…`DR-6` | Documentation rules | governance |

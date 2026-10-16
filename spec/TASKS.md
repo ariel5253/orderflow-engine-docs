@@ -4,23 +4,23 @@ title: Orderflow Engine — Task plan
 status: accepted
 lang: en
 pair: none
-last-reviewed: 2026-10-14
+last-reviewed: 2026-10-15
 ---
 
 # Orderflow Engine — Task plan
 
-**Goal:** deliver exactly what the assignment asks: the pricing engine (A1), the idempotent order confirmation (A2), one ADR of one page (A3), and the delivery items (single command, README, readable history). The optional order-summary screen comes after the cut line. Everything is governed by [SPEC.md](SPEC.md).
+**Goal:** deliver exactly what the assignment asks: the pricing engine (A1), the idempotent order confirmation (A2), one ADR of one page (A3), and the delivery items (single command, README, readable history). The optional web client comes after the cut line: the order summary the assignment offers as a plus, inside the full flow the product owner added (SPEC §10, §14.3). Everything is governed by [SPEC.md](SPEC.md).
 
 **Architecture:** a hexagonal modular monolith (SPEC §12), spread across sibling folders that will become repositories (SPEC §15). `orderflow-engine-api` is the deliverable.
 
-**Stack:** Java 21 · Spring Boot · Maven Wrapper · PostgreSQL · Liquibase · JUnit 5 · AssertJ · Testcontainers · ArchUnit · JaCoCo · PIT · Angular · ngx-translate · Docker Compose · Node and Python (tools).
+**Stack:** Java 21 · Spring Boot · Maven Wrapper · PostgreSQL · Liquibase · JUnit 5 · AssertJ · Testcontainers · ArchUnit · JaCoCo · PIT · Angular · ngx-translate · Vitest with Playwright Chromium (web specs) · nginx (web container and `/api/` proxy) · Docker Compose · Node and Python (tools).
 
 ## Global constraints
 
 | # | Constraint |
 |---|-----------|
 | GC-1 | SPEC.md and this file are the source of truth. A behavior change updates SPEC first |
-| GC-2 | Each task ends green: `./mvnw verify` (API), `node orderflow-engine-tools/docs-check/check-docs.mjs` and `node orderflow-engine-tools/integrity/check-integrity.mjs`. From T-01 on, `orderflow-engine-infra/scripts/test-all` runs all three |
+| GC-2 | Each task ends green: `./mvnw verify` (API), `node orderflow-engine-tools/docs-check/check-docs.mjs` and `node orderflow-engine-tools/integrity/check-integrity.mjs`. From T-01 on, `orderflow-engine-infra/scripts/test-all` runs all three. From T-17 on, it also runs `npm test` in `orderflow-engine-web` |
 | GC-3 | Each task enters through one or more pull requests into `dev` (into `main` in `orderflow-engine-docs`), squash-merged, then the branch is deleted. A task too large to review in one sitting is split into thematic pull requests ([pull-request-rules](../governance/pull-request-rules.md), [golden rule](../governance/golden-rule.md)). Each title is a one-line commit of at most 60 characters ending with the task tag ([commit-conventions](../governance/commit-conventions.md)) |
 | GC-4 | Stage only the task's own files. Never `git add -A`. Code repositories keep `dev` and `main`. `orderflow-engine-docs` keeps only `main` ([branches-and-environments](../governance/branches-and-environments.md)) |
 | GC-5 | No `TODO`, placeholders or dead code. A smaller scope never means a lower standard |
@@ -62,9 +62,9 @@ These are the risky edges. A reviewer should check each one in the task that own
 | D2 | T-04 … T-07 |
 | D3 | T-08 … T-10 |
 | D4 | T-11 … T-14 |
-| D5 | T-15 … T-17 |
+| D5 | T-15, T-18, T-16, then T-17 slice by slice |
 
-**MVP cut line after T-16.** T-17 is the optional screen of the assignment. At the end of D4, progress is checked against this plan. Any further cut is agreed explicitly and recorded under "Not included" in the API README.
+**MVP cut line after T-16.** T-17 is the optional plus of the assignment, extended by the product owner to the full web flow (SPEC §14.3). It is estimated at about 13.5 h, more than D5 holds after T-16, and its slices are cut-safe (T-17, Delivery). Pull request 1 of T-17 (the specification) lands first, as GC-9 requires; every other T-17 pull request starts only after T-16 is merged, and T-17 never delays T-12…T-16. At the end of D4, progress is checked against this plan (HANDOFF OD-02). Any further cut, including the T-17 slices not merged at delivery, is agreed explicitly and recorded under "Not included" in the API README.
 
 ---
 
@@ -170,7 +170,7 @@ These are the risky edges. A reviewer should check each one in the task that own
 
 ### T-09: Error handling and API i18n
 - **Covers:** AC-18, AC-19, AC-37, RF-9.
-- **Files:** `adapters/in/web/{ProblemDetailsAdvice, ErrorCode, LocaleConfig, CorrelationIdFilter}.java`, `i18n/messages{,_es,_en}.properties`, `ErrorCatalogI18nTest`, `ProblemDetailContractIT`, `LocalizedErrorIT`.
+- **Files:** `adapters/in/web/{ProblemDetailsAdvice, ErrorCode, ApiException, LocaleConfig, CorrelationIdFilter}.java`, the test-scoped `ProblemProbeController`, `i18n/messages{,_es,_en}.properties`, `ErrorCatalogI18nTest`, `ProblemDetailContractIT`, `LocalizedErrorIT`.
 - **Commit:** `feat(api): add localized problem details (T-09)`
 
 ### T-10: Quote use case and endpoints (A1)
@@ -190,7 +190,12 @@ These are the risky edges. A reviewer should check each one in the task that own
 
 ### T-13: Order history
 - **Covers:** AC-31.
-- **Files:** `ordering/{GetOrderUseCase, ListOrdersUseCase}.java`, the history endpoints (newest first, `?size=` ≤ 100), `OrderReadYourWritesIT`.
+- **Files:** `ordering/{GetOrderUseCase, ListOrdersUseCase}.java`, the history endpoints (newest first, `?size=` ≤ 100, `currency` once per E-05 body, 404 `CUSTOMER_NOT_FOUND` when `customerId` is not the caller), `OrderReadYourWritesIT`, `OrderHistoryContractIT`.
+- **Tests (`OrderHistoryContractIT`):**
+  - every E-04 and E-05 error row of the API contract, with its status and body
+  - a `customerId` other than `X-Customer-Id` → 404 `CUSTOMER_NOT_FOUND` (BD-01), whether or not that customer exists
+  - `currency` once per body, also when `items` is empty, and every `total` a string at that currency's scale (no decimals for COP, two for USD)
+  - items newest first, and `size` above 100 returns at most 100
 - **Commit:** `feat(ordering): add order history endpoints (T-13)`
 
 ### T-14: Outbox relay
@@ -207,6 +212,16 @@ These are the risky edges. A reviewer should check each one in the task that own
 - **Files:** `outbox/HousekeepingJob.java`, `HousekeepingIT`.
 - **Commit:** `feat(outbox): purge expired data by retention (T-15)`
 
+### T-18: Wire the levers into quotes
+- **Covers:** AC-01, AC-04, AC-05, AC-06, AC-07, AC-17 (quote side).
+- **Why:** T-10 was built before T-04 … T-06, so its quote path loads prices and tax rates only and seals no discount component. The engine applies the levers, but E-01 cannot until the snapshot carries them.
+- **Files:** `adapters/out/persistence/JdbcSnapshotProvider` (the tenant's active tier rules and brackets, combo rules and items, and gift rules into `PricingSnapshot`), `quoting/CreateQuoteUseCase` (seals the TIER and COMBO components, the combo allocations and the gift lines with their origin and reference value), `QuoteLeversIT`, and the lever leg of `QuoteConfirmRegressionIT` (GT-06) through `POST /api/v1/quotes`.
+- **Tests:**
+  - through E-01 against the seeds: the GT-01 totals (tiers), the GT-04 totals and allocation (combo with taxes), and a gift line from the seeded gift rule
+  - a lever deactivated after a quote no longer applies to a fresh quote, while the sealed quote and its confirmation keep it (GT-06)
+- **Runs:** after T-04 … T-07 and T-10 are on `dev`, and before T-16 is finalized.
+- **Commit:** `feat(quoting): price quotes with seeded levers (T-18)`
+
 ### T-16: Final documentation and verification
 - **Covers:** AC-36, AC-39, AC-40, AC-41.
 - **Steps:**
@@ -218,17 +233,107 @@ These are the risky edges. A reviewer should check each one in the task that own
 
 **— MVP cut line —**
 
-### T-17: Order-summary screen (optional plus, at most 1 hour)
-- **Covers:** AC-42 … AC-46, RF-9.
+### T-17: Web client: order summary and full flow (optional plus)
+- **Covers:** AC-42 … AC-46, AC-49 … AC-53, RF-9.
+- **Scope:** SPEC §10 and its §14.3 rows. The order summary is the assignment's plus (slice T-17a). The cart, the confirmation, the order, My orders, the store picker and E-07 are the product owner's extension beyond the assignment's one-hour screen (SPEC §1, Deviation).
+- **Starts:** pull request 1 (the specification) lands first, as GC-9 requires; every other T-17 pull request starts only after T-16 is merged. T-17 never delays T-12 … T-16: when time runs short, slices are cut, never the delivery date.
+- **Depends on:** T-10 (E-01, E-02) for T-17a. T-11 (E-03), T-13 (E-04) and E-07 for T-17b. T-13 (E-05) for T-17c.
+- **Delivery:** the thematic pull requests below, in that order (GC-3): docs → T-17a → infra → E-07 → T-17b → T-17c → tools → time record. Slice labels (T-17a … T-17c) name pull requests, not tasks: every commit ends in `(T-17)` and the HANDOFF tracks T-17 as one row, because the tools read task ids as `T-NN` (HANDOFF TR-10). E-07 is cut with the cart: if T-17b is not merged at delivery, the E-07 pull request is not merged either. After each web slice the client builds, runs in Docker and passes its tests, so a cut after any slice leaves no route, key or endpoint half-wired. The slices not merged at delivery are listed under "Not included" in the API README.
+- **Web test runner:** `npm test` runs `scripts/no-literal-text.mjs`, then `ng test --watch=false`. The Angular version is the latest stable release when T-17a starts, pinned to an exact version in `package.json`. Specs run in headless Chromium, through the Angular CLI's Vitest runner in browser mode with Playwright, because jsdom has no layout engine and a 768 px wrapping check passes there for any layout (HANDOFF TR-11). Every spec that reaches the API uses a simulated backend (`HttpTestingController`) and asserts the exact request: method, path, headers and body. No spec opens a socket.
+
+| # | Pull request | Repository | Commit | Estimate |
+|---|--------------|------------|--------|----------|
+| 1 | Specification: the full flow, E-07 and AC-49 … AC-53 | `orderflow-engine-docs` | `docs(spec): adopt full web flow (T-17)` | 1 h |
+| 2 | T-17a: the assignment's screen and its container | `orderflow-engine-web` | `feat(web): add order summary screen (T-17)` | 3 h |
+| 3 | The web client in the full stack and in `test-all` | `orderflow-engine-infra` | `feat(infra): serve web through api proxy (T-17)` | 0.5 h |
+| 4 | Product list (E-07), right before T-17b | `orderflow-engine-api` | `feat(quoting): list tenant products (T-17)` | 1.5 h |
+| 5 | T-17b: cart, confirmation, order, store picker and navigation | `orderflow-engine-web` | `feat(web): add cart and idempotent confirmation (T-17)` | 4.5 h |
+| 6 | T-17c: My orders and the full-flow spec | `orderflow-engine-web` | `feat(web): add order history screen (T-17)` | 2 h |
+| 7 | Figures 01 and 02 show the web client, and figure 03 gains "products" | `orderflow-engine-tools` | `docs(tools): relabel web and products in figures (T-17)` | 0.5 h |
+| 8 | Time and scope record | `orderflow-engine-api` | `docs(api): record web time and scope (T-17)` | 0.5 h |
+
+**Estimate:** about 13.5 h (11 to 16 h), against the assignment's one-hour screen. The assignment's screen alone (T-17a) takes about 3 h once its tests and its container are counted, so the plus exceeds its hour even without the extension. These are estimates, never measurements. The measured time of each pull request is recorded in the HANDOFF when it merges, and in the API README by pull request 8, in three parts: the assignment's screen, the container and test wiring, and the extension.
+
+#### T-17a: the assignment's screen and its container, pull request 2
+The order summary over E-02 and what it needs, nothing more, so its time can be measured on its own. The interceptor sends the first entry of `public/config/stores.json`; the store picker and the navigation join in T-17b. "Confirm order" joins in T-17b with E-03, and each §10.5 action that opens another screen joins with that screen.
+- **Covers:** AC-42 … AC-46, AC-51 (the notice), RF-9.
 - **Files (`orderflow-engine-web`):**
-  - Angular workspace
-  - `ui-text`, `ui-action-bar`, `ui-product-image`
-  - the `order-summary` page
-  - `public/i18n/{es,en}.json`
-  - the fixture `order-summary.fixture.json`
-  - `order-summary.spec.ts`
-  - the README section "Prevention at component level"
-  - `Dockerfile` (build with Node, serve the static screen with nginx as a non-root user), `.dockerignore`, `compose.yaml` and `.env.example`
-- **Files (`orderflow-engine-infra`):** the web service added to `compose.yaml`, and `test-all` extended with the web tests.
-- **Done when:** the test passes, `docker compose up --build` serves the screen, and the real time spent is recorded.
+  - the Angular workspace (standalone components, router, `HttpClient`) with the scripts `start`, `build` and `test`
+  - `src/app/core/`: `store-context.ts`, `api-headers.interceptor.ts` (`X-Tenant-Id`, `X-Customer-Id`, `Accept-Language`), `quote-api.ts` (E-02), `money.pipe.ts` (`Intl.NumberFormat` over the API string, with `app.formatLocale`)
+  - `src/app/ui/`: `ui-text`, `ui-action-bar`, `ui-product-image`, `ui-problem-notice`
+  - `src/app/pages/order-summary/` (route `/quotes/:quoteId`)
+  - `public/i18n/{es,en}.json` (`app.formatLocale`: `es-419` and `en`), `public/config/stores.json` (the seeded demo stores, A-06), `public/products/<sku>.svg` and `placeholder.svg`
+  - `src/testing/`: `order-summary.fixture.json` (an E-02 body, with `discounts[]` sorted by origin as the API sends them) and `long-names.json`
+  - `scripts/no-literal-text.mjs`
+  - `proxy.conf.mjs`, `nginx/default.conf.template`, `Dockerfile` (build with Node, serve with unprivileged nginx on port 8080, exact image tags), `.dockerignore`, `compose.yaml`, `.env.example` (`WEB_PORT`, `API_UPSTREAM`)
+  - `README(.es).md`: Scope, How to run, Prevention at component level, listing only what this slice delivers
+- **Files (`orderflow-engine-docs`, in the same change):** the web README's required headings in `governance/docs-governance.json`, for `README.md` (Scope, How to run, Prevention at component level) and for `README.es.md` (their Spanish pairs), so `check-docs` verifies AC-45 from this slice on. It merges right after the web pull request, never before it, so `check-docs` never requires a heading the web README lacks.
+- **Tests:**
+  - `order-summary.spec.ts` (AC-42 … AC-44): the fixture with long names, flushed through `HttpTestingController`, at 768 × 1024 and at 375 × 812: no horizontal scroll, no `ui-text` wider than its box, no `text-overflow: ellipsis`, every visible text node inside a `ui-text`, the action bar at the bottom of the viewport, all product images equal squares
+  - `ui-action-bar.spec.ts` (AC-43): a simulated 300 px keyboard, fed through an injected `visualViewport` port, keeps the bar above it; every control is at least 44 × 44 px at 375 px
+  - `ui-product-image.spec.ts` (AC-44): images with four different intrinsic ratios render as identical squares; a missing image falls back to the placeholder
+  - `ui-problem-notice.spec.ts` (AC-51): the API's `title` and `detail` as sent, the `code`, the first 8 characters of `correlationId`, and the action it is given; a request with no answer shows `problem.network`
+  - `api-headers.interceptor.spec.ts`: every `/api/` request carries the configured store and the active language
+  - `money.pipe.spec.ts`: COP at scale 0 and USD at scale 2, in `es-419` and `en`; `"12345678901234567.89"` formats exactly, which a double cannot hold, so no float is involved
+  - `i18n-keys.spec.ts` (AC-46): `es` and `en` have the same keys, each sets `app.formatLocale`, every key the code uses exists (also keys built from an enum value), and no key is unused
+  - `scripts/no-literal-text.mjs` (RF-9, P-09): no template holds literal text; text comes from `translate` or from data
+- **Done when:**
+  - `npm test` passes, and `check-docs` passes with the web README's required headings
+  - `docker compose up --build` in `orderflow-engine-web`, with the API started from its own repository, serves the client on `WEB_PORT`; a quote created with `curl` through `http://localhost:8081/api/v1/quotes`, with the headers of the first `stores.json` entry, renders at its route `/quotes/:quoteId`
+  - no response the browser receives carries a CORS header
+  - the measured time of the screen and that of the container are recorded apart in the HANDOFF
 - **Commit:** `feat(web): add order summary screen (T-17)`
+
+#### The web client in the full stack, pull request 3
+- **Files (`orderflow-engine-infra`):** the `web` service in `compose.yaml` (built from `../orderflow-engine-web`, depends on `api`, `API_UPSTREAM: http://api:${API_PORT:-8080}`, port `${WEB_PORT:-8081}:8080`), `WEB_PORT` in `.env.example`, the steps "web install" (`npm ci`) and "web tests" (`npm test`) in `scripts/test-all.{sh,ps1}`, `README(.es).md`.
+- **Done when:** `docker compose up --build` starts the database, the API and the client; `http://localhost:8081` reaches the API through `/api/`; `test-all` ends with `test-all: OK (API verify, web tests, documentation check, integrity check)`, and a failing `npm test` fails `test-all` in PowerShell too (proven once).
+- **Commit:** `feat(infra): serve web through api proxy (T-17)`
+
+#### Product list (E-07), pull request 4
+It merges right before T-17b and is cut with it.
+- **Covers:** AC-53.
+- **Files (`orderflow-engine-api`):** `quoting/{ListProductsUseCase, ProductCatalog, ProductView}.java`, `adapters/out/persistence/JdbcProductCatalog.java`, `adapters/in/web/{ProductController, ProductListResponse}.java`, the wiring in `config/QuotingConfig.java`, `ProductContractIT`, and in `README(.es).md` the catalog clause of "Not included": the only catalog operation is a read-only product list (E-07), which feeds the optional web cart. It lives in `quoting` because it lists exactly what E-01 can price. No `catalog` module is added, since catalog administration stays out (SPEC §1).
+- **Files (`orderflow-engine-docs`, in the same change):** the `quoting` row of architecture §2 (`ListProductsUseCase`, read-only `ProductCatalog` port) and the HANDOFF State.
+- **Tests (`ProductContractIT`, on Testcontainers PostgreSQL with the seeds):**
+  - `co-alpha` lists its products in SKU order, `currency` `COP` once, `listPrice` as a string at scale 0, `taxRate` as a string
+  - `ec-alpha` lists USD prices as strings at scale 2, trailing zeros kept, and never a `co-alpha` product (tenant scoping)
+  - headers follow E-01: a missing header, or an `X-Customer-Id` that is not a UUID → 400 `VALIDATION_FAILED`; an unknown tenant → 400 `TENANT_NOT_FOUND`; an unknown customer → 404 `CUSTOMER_NOT_FOUND`
+  - a request with a foreign `Origin` gets no `Access-Control-Allow-Origin` (no CORS, architecture §1.1)
+- **Done when:** GC-2 is green again after T-16 (`./mvnw verify`, `check-docs`, `check-integrity`), the HANDOFF State carries that evidence, and E-07 answers as its contract card says.
+- **Commit:** `feat(quoting): list tenant products (T-17)`
+
+#### T-17b: cart, confirmation, order and store picker, pull request 5
+The actions that open My orders join in T-17c.
+- **Covers:** AC-42 … AC-44 (cart, order, store picker), AC-49, AC-50, AC-51.
+- **Files (`orderflow-engine-web`):**
+  - `src/app/core/`: `product-api.ts` (E-07), `order-api.ts` (E-03, E-04), `cart-store.ts` (one cart per store, in browser storage), `idempotency-keys.ts` (one UUID per quote, created at the first "Confirm order" and kept in browser storage); `store-context.ts` follows the picker
+  - `src/app/shell/`: brand, navigation ("Shop"), the ES/EN switch and the store picker (a disclosure, never a `<select>`, which cuts long names when closed)
+  - `src/app/pages/cart/` (routes `/cart` and `/`): the product grid through `ui-product-image`, a quantity stepper, cash or credit, and the action bar with the units and "Get quote" (E-01)
+  - `src/app/pages/order-summary/`: "Confirm order" and "Edit cart"; the expired, confirmed and credit-short states; the §10.5 action of each problem
+  - `src/app/pages/order/` (route `/orders/:orderId`): the E-04 body, with "Order confirmed" after a 201 and "This order was already recorded" after a replay
+  - the new keys in `public/i18n/{es,en}.json`, among them `cart.actions.review`, `problem.network.title` and `problem.network.detail`
+- **Tests:**
+  - `cart.spec.ts`: the E-07 products in SKU order, with list prices and unit counts and never a subtotal or a total; `POST /api/v1/quotes` carries only lines with a quantity above zero; a 201 opens `/quotes/:quoteId`
+  - `confirm-idempotency.spec.ts` (AC-49): two taps send one request (`expectOne`); a network error and a retry send the same `Idempotency-Key` and body; a reload keeps the key; a new quote gets a new key; "Confirm order" is disabled while the request is in flight; `Idempotent-Replayed: true` leads to "This order was already recorded"; the store's cart is emptied after the 201
+  - `credit-shortfall.spec.ts` (AC-50): `credit.fits=false` disables "Confirm order" and shows the shortfall, and "Pay cash" sends E-01 with `CASH` and the same lines
+  - `problem-actions.spec.ts` (AC-51): every §8 code, and a request with no answer, on the cart, the summary and the order, shows the notice with exactly the §10.5 action, and each action does what the table says
+  - `screen-rules.spec.ts` (AC-42 … AC-44): the cart, the order and the open store picker, with long names at 768 × 1024 and 375 × 812, pass the checks of `order-summary.spec.ts`; the action bar stays above a simulated keyboard while a quantity is typed; the order renders E-04 through the same breakdown components as the summary
+  - `api-headers.interceptor.spec.ts`, added case: switching the store changes both headers
+- **Done when:** `npm test` passes, and in the full stack a `co-alpha` cart goes by clicks from cart to quote to a confirmed order with its number, with no console error.
+- **Commit:** `feat(web): add cart and idempotent confirmation (T-17)`
+
+#### T-17c: My orders and the full-flow spec, pull request 6
+- **Covers:** AC-42 (My orders), AC-51 (My orders), AC-52.
+- **Files (`orderflow-engine-web`):** `src/app/pages/history/` (route `/orders`, E-05), "My orders" in the navigation, the actions that open My orders ("View my orders" on the order and on a confirmed quote), `src/app/flow.spec.ts`, the new keys in `public/i18n/{es,en}.json`.
+- **Tests:**
+  - `history-read-your-writes.spec.ts` (AC-52): E-05 is read on every visit, as `GET /api/v1/orders?customerId=` with the selected customer; items newest first, with number, date and total in the body's `currency`; after a 201 the new order number comes first, with the confirmed total; the empty state; an unknown customer (a stale `stores.json`) shows the 404 `CUSTOMER_NOT_FOUND` notice with "Go shopping"
+  - `flow.spec.ts` (AC-52): cart → quote → confirm → order → My orders against the simulated backend, asserting each request, and the cart emptied after the 201
+  - `screen-rules.spec.ts` and `problem-actions.spec.ts`, added cases: My orders with long names at both viewports, and its default action
+- **Done when:** `npm test` and `test-all` pass, and the full stack runs the whole flow by clicks in es and en.
+- **Commit:** `feat(web): add order history screen (T-17)`
+
+#### Figures and time record, pull requests 7 and 8
+- **Files (`orderflow-engine-tools`):** in `diagrams/generate_diagrams.py`, the web box, edge label and alt text of figures 01 and 02, and "products" among the controllers of figure 03. The regenerated SVGs enter `orderflow-engine-docs` with the HANDOFF update of that pull request.
+- **Files (`orderflow-engine-api`):** in `README(.es).md`, under "Not included", a "Time spent" paragraph with the measured time in four rows (the take-home; the assignment's screen; the container, compose and `test-all` wiring; the extension), listing the slices not merged if T-17 is cut; the "CORS configuration" row of "Not included" (not needed: the web client's nginx forwards `/api/`), placed before the SonarQube row; and the `orderflow-engine-web` row of "Repositories".
+- **Done when:** the figures match architecture §1 and §2, both API READMEs carry measured times only, and `test-all` passes.
+- **Commits:** `docs(tools): relabel web and products in figures (T-17)`, `docs(api): record web time and scope (T-17)`

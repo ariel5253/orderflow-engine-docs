@@ -44,7 +44,7 @@ Un documento que no aparece aquí no existe (ver las [reglas de documentación](
 | ID | Documento | Pregunta que responde | Idioma | Estado |
 |----|-----------|-----------------------|--------|--------|
 | README-API | `orderflow-engine-api/README.es.md` | ¿Cómo se ejecuta y cuáles son el orden de palancas, la política de redondeo y el modelo de consistencia? | en, es | aceptado |
-| ADR-0001 | `orderflow-engine-api/docs/adr/0001-order-pricing-and-confirmation.es.md` | ¿Qué se decidió, qué se dejó fuera, qué revisar y qué riesgo queda? | en, es | propuesto |
+| ADR-0001 | `orderflow-engine-api/docs/adr/0001-order-pricing-and-confirmation.es.md` | ¿Qué se decidió, qué se dejó fuera, qué revisar y qué riesgo queda? | en, es | aceptado |
 | HANDOFF | [Traspaso](handoff/HANDOFF.md) | ¿En qué punto está el trabajo y cómo lo retomo? | en | aceptado |
 | CONSTITUTION | [Constitución](spec/constitution.md) | ¿Qué principios son innegociables y cómo se verifica cada uno? | en | aceptado |
 | SPEC | [Especificación](spec/SPEC.md) | ¿Qué debe hacer el sistema y cómo se verifica cada regla? | en | aceptado |
@@ -62,7 +62,7 @@ Un documento que no aparece aquí no existe (ver las [reglas de documentación](
 | GOV-002 | [Configuración del check](governance/docs-governance.json) | ¿Qué rutas, pares, encabezados y límites aplica la verificación? | en | aceptado |
 | TPL-ADR | [Plantilla de ADR](governance/templates/adr-template.md) | ¿Cómo se registra una decisión de arquitectura? | en | plantilla |
 | TPL-DOC | [Plantilla de documento](governance/templates/doc-template.md) | ¿Cómo empieza un documento nuevo? | en | plantilla |
-| README-WEB | `orderflow-engine-web/README.es.md` | ¿Qué es la pantalla y cómo se ejecuta? | en, es | planeado |
+| README-WEB | `orderflow-engine-web/README.es.md` | ¿Qué muestra el cliente web, cómo se ejecuta y cómo previene los tres defectos? | en, es | planeado |
 | README-INFRA | `orderflow-engine-infra/README.es.md` | ¿Cómo se levanta el stack completo y cómo se ejecutan todas las pruebas? | en, es | planeado |
 | README-TOOLS | `orderflow-engine-tools/README.es.md` | ¿Qué genera y verifica cada herramienta, y cómo se ejecuta? | en, es | aceptado |
 | README-APP | `orderflow-engine-app/README.es.md` | ¿Por qué esta carpeta está reservada? | en, es | reservado |
@@ -81,10 +81,10 @@ Los documentos se citan entre sí por código, no por página. Cada familia de c
 | `I-201` | La invariante del 201 | SPEC §7.2 |
 | `GT-01`…`GT-06` | Los seis golden tests del enunciado | SPEC §11 |
 | `A-01`…`A-10` | Supuestos | SPEC §13 |
-| `AC-01`…`AC-48` | Criterios de aceptación. Las filas eliminadas conservan su hueco | SPEC §14.2 |
+| `AC-01`…`AC-53` | Criterios de aceptación. Las filas eliminadas conservan su hueco | SPEC §14.2 |
 | `DEC-…`, `RISK-…` | Decisiones técnicas, riesgos | plan |
-| `T-00`…`T-17`, `GC-…`, `RF-…` | Tareas, restricciones globales, foco de revisión | TASKS |
-| `E-01`…`E-06`, `BD-…`, `GAP-…` | Fichas de operación, decisiones de comportamiento, huecos conocidos | api-contract |
+| `T-00`…`T-18`, `GC-…`, `RF-…` | Tareas, restricciones globales, foco de revisión | TASKS |
+| `E-01`…`E-07`, `BD-…`, `GAP-…` | Fichas de operación, decisiones de comportamiento, huecos conocidos | api-contract |
 | `DM-…` | Notas del modelo de datos | data-model |
 | `ADR-0001` | El registro de decisión de arquitectura | `orderflow-engine-api/docs/adr/` |
 | `DR-1`…`DR-6` | Reglas de documentación | governance |

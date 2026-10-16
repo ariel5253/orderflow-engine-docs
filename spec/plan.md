@@ -4,7 +4,7 @@ title: Orderflow Engine — Technical plan
 status: accepted
 lang: en
 pair: none
-last-reviewed: 2026-10-14
+last-reviewed: 2026-10-15
 ---
 
 # Orderflow Engine — Technical plan
@@ -30,9 +30,9 @@ This plan lists every technical decision with its rejected alternatives, and kee
 | DEC-11 | Spring `MessageSource` (API) and ngx-translate runtime JSON (web), es default | Angular built-in i18n: one build per locale | SPEC §9 | — |
 | DEC-12 | Testcontainers PostgreSQL for integration tests | H2: different locking and SQL dialect, so it would prove nothing about A2 | SPEC §11 | — |
 | DEC-13 | Golden tests as JSON fixtures (request, snapshot, expected) | Inline assertions: hard to review numbers, easy to drift | SPEC §11 | — |
-| DEC-14 | JUnit 5 runs the tests, JaCoCo measures line and branch coverage (gate ≥ 90% on `pricing`), PIT measures whether the tests detect wrong code (≥ 80% on `pricing.domain`, optional profile), ArchUnit guards the architecture | Coverage alone: says nothing about assertion quality. SonarQube or SonarCloud now: needs a server the evaluator cannot run, and it does not measure coverage itself but imports JaCoCo's report (adoption path in §4). Cobertura: unmaintained. OpenClover: much smaller ecosystem | P-06, P-08 | — |
+| DEC-14 | JUnit 5 runs the tests, JaCoCo measures line and branch coverage (gate ≥ 90% on `pricing`), PIT measures whether the tests detect wrong code (≥ 80% on `pricing.domain`, optional profile), ArchUnit guards the architecture | Coverage alone: says nothing about assertion quality. SonarQube or SonarCloud now: needs a server the evaluator cannot run, and it does not measure coverage itself but imports JaCoCo's report (adoption path in §3). Cobertura: unmaintained. OpenClover: much smaller ecosystem | P-06, P-08 | — |
 | DEC-15 | Sibling folders, each a future repository, with a docs folder that owns the specification | Monorepo: one history and one command, but it ties together components that are released, owned and evolved independently (service, screen, infrastructure, documentation) | SPEC §15 | 0001 |
-| DEC-16 | Angular standalone components for the summary screen | Flutter: not installed in the build environment, and the assignment accepts either | SPEC §10 | — |
+| DEC-16 | Angular standalone components for the web client: summary screen and full flow, SPEC §10 | Flutter: not installed in the build environment, and the assignment accepts either | SPEC §10 | — |
 | DEC-18 | Documentation governance enforced by `check-docs.mjs`, with no dependencies, in a separate `orderflow-engine-tools` repository that also generates the figures, the progress chart and the ADR in Word and PDF | Manual review only: rules that are not checked decay | P-11 | — |
 | DEC-19 | Relational model in third normal form, no JSON columns. Tenant-scoped composite keys `(tenant_id, id)` and UUIDv7 ids | JSON documents for quotes: not constrainable or queryable per line. Global surrogate keys only: allow cross-tenant references and need re-keying to shard | data-model §7, §9 | 0001 |
 | DEC-20 | The Liquibase changelogs live in `orderflow-engine-api`, the only component that talks to PostgreSQL, and are applied when the service starts. Each changeset has a rollback that `LiquibaseRollbackIT` proves | A separate migration job with a DML-only runtime role: needs a second credential and a different lock for the quote (`SELECT … FOR UPDATE` requires UPDATE privilege). A separate schema repository applied by infra or a submodule: a plain clone of the API would have no schema, so `./mvnw verify` would stop being a single command. A schema image or artifact on GitHub Packages: the build would depend on a registry and its access rules. Both separate repositories split every schema change from the SQL that relies on it | SPEC §0, §11, §12, AC-38 | — |
@@ -72,7 +72,7 @@ These are not implemented now, because the assignment does not ask for them and 
 | Code | Risk | Probability | Impact | Mitigation | Owner task |
 |------|------|-------------|--------|------------|-----------|
 | RISK-01 | Contention on a customer's credit row under bursts of confirmations | Medium | Latency | One short transaction, a `lock_timeout`, and 409 `IDEMPOTENCY_KEY_IN_PROGRESS` instead of waiting forever. Measured in `ConfirmOrderConcurrencyIT` | T-13 |
-| RISK-02 | The outbox grows while the ERP is down for a long time | Medium | Storage, delayed ERP | Backoff, `DEAD` after max attempts, `outbox_pending` gauge, documented requeue | T-15 |
+| RISK-02 | The outbox grows while the ERP is down for a long time | Medium | Storage, delayed ERP | Backoff, `DEAD` after max attempts, `outbox_pending` gauge, and the requeue procedure in the "Operations" section of the API README | T-15 |
 | RISK-03 | Prices honored for the quote TTL after a price error | Low | Revenue | Accepted and recorded as the ADR risk. A short TTL (15 min) bounds it. A revocation operation is the documented next step | T-16 |
 | RISK-04 | Engine change silently alters prices of new quotes | Medium | Pricing errors | Golden tests fail the build | T-07 |
 | RISK-05 | A downstream consumer does not deduplicate by `event_id` | Medium | Duplicate push or ERP order | `event_id` contract, push collapse id, ERP upsert by order number. Stated in the ADR | T-15 |

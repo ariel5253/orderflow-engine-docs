@@ -4,7 +4,7 @@ title: Orderflow Engine — Specification
 status: accepted
 lang: en
 pair: none
-last-reviewed: 2026-10-14
+last-reviewed: 2026-10-15
 ---
 
 # Orderflow Engine — Specification
@@ -27,19 +27,29 @@ Single command for code and tests: `./mvnw verify` in `orderflow-engine-api`, wh
 
 ## 1. Scope
 
-The scope is exactly the assignment: A1 (pricing engine), A2 (order confirmation), A3 (one ADR), the delivery items, and the optional order-summary screen. Everything else is out.
+The scope is the assignment: A1 (pricing engine), A2 (order confirmation), A3 (one ADR), the delivery items, and the optional front. The front carries one recorded deviation: it covers the whole flow, not one screen (see Deviation below). Everything else is out.
 
 | In scope | Out of scope (reason) |
 |----------|-----------------------|
 | `POST /api/v1/quotes`, `GET /api/v1/quotes/{quoteId}` (A1 endpoint) | Authentication and authorization. Tenant and customer come from headers (A-06) |
-| `POST /api/v1/orders` with `Idempotency-Key` (A2) | Catalog and lever administration. Data is seeded by migrations |
+| `POST /api/v1/orders` with `Idempotency-Key` (A2) | Catalog and lever administration, in the API and in the front. Data is seeded by migrations, and the front only reads products (§10.3) |
 | `GET /api/v1/orders/{orderId}`, `GET /api/v1/orders?customerId=` (the "history" of A2) | Real push and ERP integrations. Fakes sit behind ports |
-| Pricing engine: tiers, combos, gifts, taxes; credit check | Cart persistence. The cart travels in the quote request |
+| Pricing engine: tiers, combos, gifts, taxes; credit check | Server-side cart persistence. The cart travels in the quote request, and the front keeps it in the browser only (§10.1) |
 | Outbox relay to push and ERP; retention housekeeping | Payment capture, cancellation, credit release (A-09) |
 | i18n (es default, en) for every end-user text | Quote revocation. It is recorded as the ADR's risk and mitigation |
-| Angular order-summary screen (at most 1 hour) | Deployment, cloud infrastructure, OpenAPI file. The contract is [api-contract.md](api-contract.md) |
-| Local run with Docker: each executable repository has its own Docker files and `.env.example` (§14.3, §15) | |
-| | Mobile app. `orderflow-engine-app` is reserved and not built |
+| Angular front (§10): cart → quote → confirmation → order → history, built around the assignment's order-summary screen | Deployment, cloud infrastructure, OpenAPI file. The contract is [api-contract.md](api-contract.md) |
+| Local run with Docker: each executable repository has its own Docker files and `.env.example` (§14.3, §15) | Front login and customer accounts. The store picker sends a seeded tenant and customer as headers (A-06, §10.1) |
+| `GET /api/v1/products`: the tenant's catalog, read-only, for the front's cart (E-07, §14.3) | Mobile app. `orderflow-engine-app` is reserved and not built |
+
+**Deviation.** The assignment's front plus is one order-summary screen with at most one hour of work. It was exceeded on purpose: on 2026-10-15 the owner extended it to the full flow. The screen alone also exceeds the hour once its tests and container are counted. Nothing in A1, A2 or A3 changes, and `./mvnw verify` does not depend on it.
+
+| Aspect | Containment |
+|--------|-------------|
+| Delivery | The front, and E-07 with it, starts after T-16 is merged (MVP cut line, [TASKS](TASKS.md)). The API deliverable neither depends on it nor waits for it |
+| Business rules | None added. The front shows API amounts only and never computes money (§10.3) |
+| API surface | One read-only operation, `GET /api/v1/products` (E-07), with no lever, customer or credit data. It ships only with the cart (T-17) and is cut with it |
+| Time | Measured time is recorded in the API README under "Not included" and in the HANDOFF, split into three parts: the assignment's screen, the container and test wiring, and the extension. The screen alone also exceeds the hour once its tests and container are counted |
+| Justification | One row per added behavior in §14.3 |
 
 ## 2. Glossary
 
@@ -287,16 +297,18 @@ The assignment reports that, in three releases, orders were confirmed but later 
 
 ## 8. API contract
 
-This section fixes the rules. The operation cards (E-01…E-06), with requests, responses and examples, are in [api-contract.md](api-contract.md), which is the contract. The tables behind it are in [data-model.md](data-model.md).
+This section fixes the rules. The operation cards (E-01…E-07), with requests, responses and examples, are in [api-contract.md](api-contract.md), which is the contract. The tables behind it are in [data-model.md](data-model.md).
 
 - Required headers: `X-Tenant-Id` and `X-Customer-Id`. `Idempotency-Key` is also required on `POST /orders`.
 - Optional header: `Accept-Language`.
+- The catalog (E-07, `GET /api/v1/products`) is read-only and tenant-scoped, with no paging, and needs the same headers as every operation. It returns `currency` once and the tenant's products sorted by SKU, each with `sku`, `description`, `listPrice` and `taxRate` as strings. It carries no lever, no customer or credit data (credit stays discoverable only through 422 `CREDIT_NOT_ENABLED`) and no image field (the front looks images up by SKU, §10.2).
 - Errors use RFC 9457 `application/problem+json` with these fields:
   - `type`
   - a localized `title` and `detail`
   - `status`
   - a stable `code`
   - `correlationId`
+  - `instance`, the request path (RFC 9457)
 
   Internals such as stack traces and SQL are never exposed.
 
@@ -304,6 +316,7 @@ This section fixes the rules. The operation cards (E-01…E-06), with requests, 
 |--------|---------|-------|
 | 400 | Malformed request | `VALIDATION_FAILED`, `INVALID_QUANTITY`, `CART_EMPTY`, `TENANT_NOT_FOUND`, `IDEMPOTENCY_KEY_MISSING`, `IDEMPOTENCY_KEY_INVALID` |
 | 404 | Not found, or not visible to the caller | `QUOTE_NOT_FOUND`, `ORDER_NOT_FOUND`, `CUSTOMER_NOT_FOUND` |
+| 404, 405, 406, 415 | The framework rejects the route, method or media type before any operation runs. It keeps its own status and headers, such as `Allow` on a 405. A body it cannot read is a 400 `VALIDATION_FAILED` | `REQUEST_NOT_SUPPORTED` |
 | 409 | Conflict with the current state | `QUOTE_EXPIRED`, `QUOTE_ALREADY_CONFIRMED`, `CREDIT_LIMIT_EXCEEDED`, `IDEMPOTENCY_KEY_IN_PROGRESS` |
 | 422 | Valid request that breaks a business rule | `UNKNOWN_SKU`, `CREDIT_NOT_ENABLED`, `IDEMPOTENCY_KEY_REUSED` |
 | 500 | Unexpected. Logged with the correlation id | `INTERNAL_ERROR` |
@@ -312,8 +325,9 @@ This section fixes the rules. The operation cards (E-01…E-06), with requests, 
 
 | Level | Fields |
 |-------|--------|
+| Body | `currency`, the ISO 4217 code of every money value in the body, given once. Money values are JSON strings at the currency's scale |
 | Line | `sku`, `description`, `qty`, `isGift`, `origin` (gift only, `GIFT:<id>`), `unitPrice`, `gross`, `discounts[{origin, amount}]`, `comboAllocations[{comboId, amount}]`, `net`, `referenceValue` (gift only), `taxableBase`, `taxRate`, `tax` |
-| Totals | `currency`, `grossSubtotal`, `discounts[{origin, amount}]`, `gifts[{sku, qty, origin}]`, `taxableBase`, `taxes`, `total` |
+| Totals | `grossSubtotal`, `discounts[{origin, amount}]`, `gifts[{sku, qty, origin}]`, `taxableBase`, `taxes`, `total` |
 | Credit | `credit{fits, available, shortfall}`, present when `paymentMethod = CREDIT` |
 
 ## 9. Internationalization
@@ -321,39 +335,128 @@ This section fixes the rules. The operation cards (E-01…E-06), with requests, 
 | Side | Mechanism | Files | Default and switching |
 |------|-----------|-------|-----------------------|
 | API | Spring `MessageSource`, UTF-8 | `src/main/resources/i18n/messages.properties` (Spanish base), `messages_es.properties`, `messages_en.properties` | `Accept-Language` picks the locale. Missing or unsupported → `app.i18n.default-locale=es` |
-| Web | `@ngx-translate/core`, runtime JSON | `public/i18n/es.json`, `public/i18n/en.json` | Default `es`. The `?lang=en` query parameter switches language without touching code |
+| Web | `@ngx-translate/core`, runtime JSON | `public/i18n/es.json`, `public/i18n/en.json` | Default `es`. The header's ES/EN switch, or `?lang=en`, changes the language at run time without touching code. Every API call sends the active language in `Accept-Language`, so problem texts arrive in it |
 
 - **Domain and application layers carry only error codes and arguments.** The web adapter resolves the text. Logs are in English and never translated.
 - Keys are namespaced by feature, e.g. `error.QUOTE_EXPIRED.title` and `orderSummary.totals.taxableBase`.
-- Money is formatted with `Intl.NumberFormat`, using the API currency and the active locale.
+- Money is formatted with `Intl.NumberFormat`, using the body's `currency` and the dictionary's formatting locale. The API's decimal string goes to `format()` as is, with the fraction digits set to the string's scale, so no amount becomes a binary float (§10.3).
+- **Formatting locale.** Each web dictionary names the locale that `Intl` uses for money, numbers and dates, under `app.formatLocale`: `es-419` in `es.json`, `en` in `en.json`.
+
+  | Locale | 1500 COP | 77.11 USD | Decision |
+  |--------|----------|-----------|----------|
+  | `es` | `1500 $` | `77,11 $` | Rejected: the symbol follows the amount, and amounts below 10,000 are not grouped |
+  | `es-CO` | `$ 1.500` | `$ 77,11` | Rejected: a per-country locale ties the format to the tenant, and no API field carries the country's locale |
+  | `es-419` | `$1,500` | `$77.11` | Chosen for `es` |
+  | `en` | `$1,500` | `$77.11` | Chosen for `en` |
+
+  The locale lives in the dictionary, so adding a language is still one file per side. Trade-off: one format per language, not per country, so a Colombian user reads `$115,647`, not the local `$ 115.647`.
+- Problem `title` and `detail` are API text, resolved by `Accept-Language`. The web dictionaries add only the action labels of §10.5 and the no-answer text `problem.network`, never a second copy of an API message.
 - **Adding a language** means adding one file per side. No code changes.
 - **Guards:**
   - `check-docs` fails when two locales do not have the same key set (API and web)
   - `ErrorCatalogI18nTest` fails when an error code lacks a message in any bundle
 - **Rejected:** Angular built-in i18n. It builds one bundle per locale and cannot switch at runtime.
 
-## 10. Frontend (optional plus, at most 1 hour)
+## 10. Frontend (optional plus: the one-hour summary screen, extended to the full flow)
 
-One standalone Angular page, `order-summary`. It renders a fixed JSON fixture with the exact shape of `GET /api/v1/quotes/{quoteId}`: lines, discounts with origin, gifts with quantity, taxes and total.
+The assignment's plus is one order-summary screen, time-boxed to one hour. By owner request, the front covers the domain flow the assignment uses as context instead: cart → quote → confirmation → order → history (§1 Deviation, §14.3). It is one standalone Angular application in `orderflow-engine-web` that calls the API. The order-summary screen is still the assignment's screen: lines, discounts with their origin, gifts with their quantity, taxes and total. Its component test still renders `order-summary.fixture.json`, which has the exact shape of E-02.
 
-| Defect the assignment names | Component-level answer |
-|-----------------------------|------------------------|
-| Truncated text | `ui-text` always wraps (`overflow-wrap: anywhere`, `min-width: 0` in flex and grid), never uses ellipsis, and grows vertically. Screens cannot print text another way |
-| Controls hidden by the system bar or the keyboard | `ui-action-bar` pads with `env(safe-area-inset-bottom)` (`viewport-fit=cover`) and follows `visualViewport` to stay above the keyboard. Layout uses `100dvh` |
-| Grid images scaled inconsistently | `ui-product-image` enforces one `aspect-ratio` with `object-fit: contain`, and is the only way to render a product image in a grid |
+Labels are quoted here by their English text and, for the actions of §10.5, their i18n key. Spanish is the default language (§9).
 
-One component test renders very long product names at a 768 px viewport and checks the three rules. The real time spent is recorded in the API README under "Not included".
+### 10.1 Screens and routes
+
+| Route | Screen | Calls | Shows | Action bar |
+|-------|--------|-------|-------|------------|
+| `/cart`, also `/` | Cart | The catalog source (§10.3), then E-01 | A product grid with image, description, SKU, list price before taxes, tax rate and a quantity stepper. Cash or credit. The unit count | "Get quote", disabled while the cart is empty. A 201 opens `/quotes/:quoteId` |
+| `/quotes/:quoteId` | Order summary, the assignment's screen | E-02 on every visit, then E-03 | Status, `expiresAt`, the §8 breakdown, and `credit{available, fits, shortfall}` with the BR-06 advisory note | The total, "Edit cart" and "Confirm order" (§10.4). A 201 opens `/orders/:orderId` |
+| `/orders/:orderId` | Order | E-04 | Order number, `confirmedAt`, payment method and the same breakdown. Right after E-03, a notice: "Order confirmed", or "This order was already recorded" on a replay | The total, "View my orders" and "Keep shopping" |
+| `/orders` | My orders | E-05 on every visit | Order number, date and total, newest first, or an empty state | "Go shopping" |
+
+The list is closed. Any other screen (search, categories, promotions, account, credit balance, cancellation, notifications) needs a new §1 change.
+
+| Shell element | Rule | Verified by |
+|---------------|------|-------------|
+| Headers | One HTTP interceptor sets `X-Tenant-Id`, `X-Customer-Id` and `Accept-Language` on every call. Screens never set headers | `api-headers.interceptor.spec.ts` |
+| Store picker | Lists the seeded stores (tenant id, customer id, display name) from `public/config/stores.json`. It stands in for authentication (A-06). It is a disclosure, not a native `<select>`, because a closed select cuts long names | `screen-rules.spec.ts` |
+| Navigation | "Shop" (`/cart`), "My orders" (`/orders`) and the ES/EN switch (§9) | *(review)* |
+| Cart state | In the browser only, one cart per store, emptied after a 201. The server keeps no cart (§1) | `confirm-idempotency.spec.ts` |
+| Data text | Product descriptions and store names are seed data, shown as received and never translated | *(review)* |
+
+### 10.2 Components: prevention at component level
+
+Prevention lives in components, not in screens. A screen that prints text, holds an action or shows a product image without them fails AC-42, AC-43 or AC-44.
+
+| Defect the assignment names | Component | Rule |
+|-----------------------------|-----------|------|
+| Truncated text | `ui-text` | The only way a screen prints text. It always wraps (`overflow-wrap: anywhere`, `min-width: 0` in flex and grid), never uses ellipsis, `line-clamp` or `text-overflow`, and grows vertically. An amount sits in a `flex: none` or grid `auto` cell, so a long name wraps and the amount never splits |
+| Controls hidden by the system bar or the keyboard | `ui-action-bar` | Sticky to the bottom of every screen, padded with `env(safe-area-inset-*)` (`viewport-fit=cover`), and lifted above the keyboard by following `visualViewport`. The shell uses `100dvh`. Each screen's primary action lives here |
+| Grid images scaled inconsistently | `ui-product-image` | One `aspect-ratio` token with `object-fit: contain`. It is the only way to render a product image, in the cart grid and on breakdown lines. The contract has no image field, so the image is `public/products/<sku>.svg`, with a placeholder when it fails to load |
+
+| Shared component | Rule | Verified by |
+|------------------|------|-------------|
+| `ui-problem-notice` | Renders a `problem+json`: the API's `title` and `detail`, already in the active language, then the `code` and a reference made of the first 8 characters of `correlationId`, then the action of §10.5. A request with no answer shows the web text `problem.network` instead | `ui-problem-notice.spec.ts`, `problem-actions.spec.ts` |
+
+### 10.3 Money on the front
+
+| Rule | Verified by |
+|------|-------------|
+| The front never computes money. Every amount on screen is a string from an API body, the catalog included, formatted as is by one `money` pipe (§9). No arithmetic operator touches an amount | `money.pipe.spec.ts`; the absence of arithmetic *(review)* |
+| The cart shows list prices and unit counts, never a subtotal or a total. The total appears only with the quote | `cart.spec.ts` |
+| Catalog source: `GET /api/v1/products` (E-07), read on every visit to the cart, so the cart lists exactly what the API prices | `ProductContractIT` |
+| History currency: the E-05 body's `currency`, as in every other body (§8) | `OrderHistoryContractIT`, `history-read-your-writes.spec.ts` |
+
+### 10.4 Confirmation and client-side idempotency
+
+This is the client side of §7.3: one key per quote, created once and reused until the quote has an answer.
+
+| Situation | Client | API (§7.3) |
+|-----------|--------|------------|
+| First tap on "Confirm order" | Creates a UUID `Idempotency-Key`, stores it with the quote id in browser storage, then sends E-03 | — |
+| A tap while E-03 is in flight | Sends nothing: the button stays disabled from the tap until the answer | — |
+| No answer, a 5xx, or 409 `IDEMPOTENCY_KEY_IN_PROGRESS` | "Retry" sends E-03 again with the stored key | Replays the stored 201 if the first request committed |
+| Reload or a return to the quote, then a tap | Reuses the stored key | Same as above |
+| 201 with `Idempotent-Replayed: true` | Opens the order with "This order was already recorded" | Byte-identical replay |
+| 201 without it | Opens the order with "Order confirmed" and empties the store's cart | — |
+| Browser storage lost (private window, cleared data), then a tap | Sends a new key | 409 `QUOTE_ALREADY_CONFIRMED` with the order number ([api-contract](api-contract.md) BD-03), whose action opens the order |
+| A re-quote ("Quote again", "Pay cash") | The new quote gets its own key on its first tap | A different quote is a different request |
+
+| Quote state | "Confirm order" | Notice and action |
+|-------------|-----------------|-------------------|
+| `OPEN`, cash, or credit with `fits=true` | Enabled | — |
+| `OPEN`, credit with `fits=false` | Disabled | The shortfall, and "Pay cash", which quotes the same lines with `CASH` (E-01) |
+| `EXPIRED` | Disabled | "Quote again", which quotes the same lines with the same payment method |
+| `CONFIRMED` | Disabled | "View order {number}" when the client knows the order, otherwise "View my orders" |
+
+The summary reads E-02 on every visit, so `credit` reflects the customer's current position. A quote that does not fit is never sent to confirmation. 409 `CREDIT_LIMIT_EXCEEDED` stays reachable only through the race of A-08: two open quotes both fit, one is confirmed, and the other no longer fits.
+
+### 10.5 Problem → user action
+
+Every problem the front can receive has exactly one way out. The text comes from the API, and the web dictionaries hold only the action labels (§9). A re-quote that fails shows its problem on the cart.
+
+| Code | Screen | Action | Effect |
+|------|--------|--------|--------|
+| `CREDIT_NOT_ENABLED` (422) | Cart | "Pay cash" (`quote.actions.payCash`) | Quotes the same lines with `CASH` and opens the new quote |
+| `QUOTE_EXPIRED` (409) | Summary | "Quote again" (`quote.actions.requote`) | Quotes the same lines with the same payment method and opens the new quote |
+| `CREDIT_LIMIT_EXCEEDED` (409) | Summary | "Pay cash" (`quote.actions.payCash`) | Quotes the same lines with `CASH` and opens the new quote |
+| `QUOTE_ALREADY_CONFIRMED` (409) | Summary | "View order {number}" (`quote.actions.viewOrder`) | Opens `/orders/:orderId`, taken from the problem body |
+| `IDEMPOTENCY_KEY_IN_PROGRESS` (409), `INTERNAL_ERROR` (500), or no answer (no response, or a 5xx without a `problem+json` body, such as a proxy 502, 503 or 504) | Any | "Retry" (`common.retry`) | Repeats the same request. E-03 keeps its key (§10.4) |
+| Any other code | Cart | "Review cart" (`cart.actions.review`) | Closes the notice and keeps the cart as it was |
+| Any other code | Summary | "Edit cart" (`quote.actions.edit`) | Opens `/cart` with the same lines |
+| Any other code | Order | "View my orders" (`order.actions.history`) | Opens `/orders` |
+| Any other code | My orders | "Go shopping" (`history.actions.shop`) | Opens `/cart` |
+
+The measured time, split into the three parts of §1 (Deviation), is recorded in the API README under "Not included" and in the HANDOFF. The web README points to it.
 
 ## 11. Testing strategy
 
 | Layer | Scope | Tooling |
 |-------|-------|---------|
 | Unit | `Money`, normalization, each lever, the pipeline | JUnit 5, AssertJ |
-| Golden | Full breakdowns for fixed inputs, with a fixed clock and fixed ids | JSON fixtures under `src/test/resources/golden/<case>/` (`request.json`, `snapshot.json`, `expected.json`). Every golden test is tagged `@Tag("golden")` |
+| Golden | Full breakdowns for fixed inputs, with a fixed clock and fixed ids | JSON fixtures under `src/test/resources/golden/<case>/` (`request.json`, `snapshot.json`, `expected.json`). GT-05 also has `expected-quote.json`, the full E-01 body that `GoldenQuoteTest` asserts; its `expected.json` stays the engine breakdown, so `GoldenPricingTest` checks it like every other case. Every golden test is tagged `@Tag("golden")` |
 | Integration | Persistence, transactions, concurrency, outbox | Testcontainers PostgreSQL, Spring Boot test |
 | Contract | HTTP status, `problem+json` shape, i18n | MockMvc |
 | Architecture | Pure domain, no float/double, transaction boundary placement | ArchUnit |
-| Web | Component rules with long names | Angular test runner |
+| Web | The three component rules on every screen with long names; client idempotency, credit shortfall, problem actions and history freshness against a stubbed backend; money formatting; dictionary keys | Angular test runner, `HttpTestingController` |
 
 **The six golden tests the assignment requires.** Each one also asserts the BR-05 identities.
 
@@ -499,13 +602,18 @@ Rows that were removed from scope are deleted. IDs are never renumbered.
 | AC-39 | The API README contains, inline: how to run, lever order, rounding policy, consistency model | §15 | T-00, T-16 | `check-docs` (required headings) |
 | AC-40 | ADR-0001 fits one page (≤ 500 words per language) and covers the four A3 items | §15 | T-00, T-16 | `check-docs` (ADR rules and required headings) |
 | AC-41 | The history shows one Conventional Commit per task | TASKS | all | Review of `git log` |
-| AC-42 | Long product names wrap without truncation at a 768 px viewport | §10 | T-17 | `order-summary.spec.ts` |
-| AC-43 | The action bar respects the safe area and the keyboard | §10 | T-17 | `order-summary.spec.ts` |
-| AC-44 | All grid images render through `ui-product-image` with one aspect ratio | §10 | T-17 | `order-summary.spec.ts` |
-| AC-45 | The web README explains prevention at component level | §10 | T-17 | `check-docs` (required headings) |
-| AC-46 | Web `es` and `en` dictionaries have identical keys | §9 | T-17 | `check-docs` |
+| AC-42 | Long product and store names wrap without truncation at the 768 px and 375 px viewports on every screen: cart, summary, order, My orders and the store picker. No screen prints text outside `ui-text`, and no amount splits across lines | §10.2 | T-17 | `order-summary.spec.ts`, `screen-rules.spec.ts` |
+| AC-43 | On every screen, the action bar respects the safe area and stays above the on-screen keyboard. The cart's quantity input is the keyboard case | §10.2 | T-17 | `order-summary.spec.ts`, `screen-rules.spec.ts`, `ui-action-bar.spec.ts` |
+| AC-44 | Every product image, in the cart grid and on breakdown lines, renders through `ui-product-image` with one aspect ratio whatever the source image's ratio, and a missing image falls back to the placeholder | §10.2 | T-17 | `order-summary.spec.ts`, `screen-rules.spec.ts`, `ui-product-image.spec.ts` |
+| AC-45 | The web README explains prevention at component level, the screens and routes, how to run the flow with the API, and where the time spent beyond the one-hour cap is recorded | §10, §15 | T-17 | `check-docs` (required headings) |
+| AC-46 | Web `es` and `en` dictionaries have identical keys, each sets `app.formatLocale`, every key the screens use exists (including keys built at run time for status, origin, payment method and actions), and none is unused | §9 | T-17 | `check-docs`, `i18n-keys.spec.ts` |
 | AC-47 | The domain is free of Spring and JDBC, and `@Transactional` appears only in the application layer | §12 | T-01, T-11 | `DomainPurityArchTest`, `TransactionBoundaryArchTest` |
 | AC-48 | Housekeeping purges keys, expired quotes and sent events by TTL | §12 | T-15 | `HousekeepingIT` |
+| AC-49 | The summary creates one `Idempotency-Key` per quote on the first tap of "Confirm order", stores it, and sends the same key on every retry of that quote: no answer, 5xx, `IDEMPOTENCY_KEY_IN_PROGRESS`, reload. The button is disabled while E-03 is in flight, so a double tap sends one request, and a replayed 201 shows the "already recorded" notice | §10.4, §7.3 | T-17 | `confirm-idempotency.spec.ts` |
+| AC-50 | An `OPEN` credit quote with `fits=false` disables "Confirm order", shows the shortfall and offers "Pay cash", which quotes the same lines with `CASH` | §10.4, BR-06 | T-17 | `credit-shortfall.spec.ts` |
+| AC-51 | Every §8 error code, and a request with no answer, shows a notice with its text, code and reference, and exactly the action of the §10.5 table, default included. Each action does what the table says | §10.5 | T-17 | `problem-actions.spec.ts`, `ui-problem-notice.spec.ts` |
+| AC-52 | The front keeps no copy of orders: the order screen reads E-04 and My orders reads E-05 on every visit, so after a 201 the new order number appears first in My orders, with the confirmed total | §10.1, I-201 | T-17 | `history-read-your-writes.spec.ts`, `flow.spec.ts` |
+| AC-53 | `GET /api/v1/products` returns only the caller tenant's products, sorted by SKU, each with `sku`, `description`, `listPrice` and `taxRate` as strings, and `currency` once. It exposes no lever, customer or credit data, and an unknown tenant or customer gets 400 `TENANT_NOT_FOUND` or 404 `CUSTOMER_NOT_FOUND` | §8 | T-17 | `ProductContractIT` |
 
 ### 14.3 Beyond the assignment
 
@@ -532,6 +640,13 @@ Everything the assignment does not ask for is listed here, with what it buys. No
 | Own Docker files per executable repository (`api`, `web`, `tools`) and a full-stack compose in `infra` | — | Scalability | Each repository builds and runs alone, and the whole stack starts with one command | T-00, T-01, T-17 | Owner-requested |
 | Environment contract: `.env.example` per repository, `.env` never versioned | — | Stability | Configuration is explicit, and no secret reaches a repository or an image | T-01, T-17 | Owner-requested |
 | Repository integrity check (`check-integrity`): ignore files, line endings, secrets | — | Quality | The integrity policy is enforced on every task, not just written down | T-00 | Owner-requested |
+| Front extended beyond the assignment's one-hour order-summary screen to the full flow: cart, summary, order, My orders | AC-42 … AC-46 (every screen) | Quality | The reviewer runs the domain flow the assignment uses as context against the real API, and the three defect rules are proven on every screen, not on one | T-17 | Owner-requested |
+| Store picker: a seeded tenant and customer sent as headers | — | Scalability | Both seeded countries show in the UI (COP scale 0, USD scale 2), so the front proves too that no currency or scale is hard-coded | T-17 | Owner-requested |
+| Client-side idempotency: key created on the first tap, reused on every retry, button disabled in flight, replay notice | AC-49 | Stability | The A2 guarantee holds end to end: a bad network, a double tap or a reload never creates a second order or consumes credit twice, and the user learns when an answer was a replay | T-17 | Owner-requested |
+| "Confirm order" disabled when credit does not fit, with "Pay cash" | AC-50 | Quality | The user is never sent into a 409 the quote already predicts. `CREDIT_LIMIT_EXCEEDED` remains only for the A-08 race | T-17 | Owner-requested |
+| Problem notice with one action per error code | AC-51 | Quality | No error is a dead end, and the code and reference on screen let support find the log line by `correlationId` | T-17 | Owner-requested |
+| History read-your-writes from the screen | AC-52 | Stability | The assignment's reported defect, an order number shown and then missing from the history, is also excluded on the client: no front cache can hide a committed order. AC-31 proves the server side | T-17 | Owner-requested |
+| Read-only catalog operation `GET /api/v1/products` (E-07) | AC-53 | Stability | The cart lists exactly what the API prices, so no client copy of country data can drift from the seeds | T-17 | Owner-requested |
 
 ## 15. Deliverables and repositories
 
@@ -540,7 +655,7 @@ The workspace contains sibling folders, and each one is a future repository with
 | Folder | Purpose |
 |--------|---------|
 | `orderflow-engine-api` | **The deliverable.** Spring Boot service, tests, golden fixtures, Liquibase, README, ADR-0001, and its own `Dockerfile` and `compose.yaml` (service and PostgreSQL) |
-| `orderflow-engine-web` | The optional order-summary screen, with its own `Dockerfile` (nginx) and `compose.yaml` |
+| `orderflow-engine-web` | The optional Angular front: the full ordering flow around the order-summary screen (§10), with its own `Dockerfile` (nginx) and `compose.yaml`. Alone it serves the screens; the flow needs the API, which the `orderflow-engine-infra` compose starts beside it |
 | `orderflow-engine-infra` | Docker Compose for the full stack, built from the sibling repositories, and `scripts/test-all` |
 | `orderflow-engine-docs` | Specification, plan, contract, data model, architecture, governance, and the generated figures, progress chart and ADR in Word and PDF |
 | `orderflow-engine-tools` | Generators and checks: figures, progress chart, ADR in Word and PDF, documentation, integrity and consistency checks. Its own `Dockerfile` (Python and Node) |
@@ -552,8 +667,8 @@ Delivery documents exist in **English and Spanish**. Internal technical document
 
 | Document | Location | Languages |
 |----------|----------|-----------|
-| API README: how to run, lever order, rounding policy, consistency model, golden tests, ADR, not included, repositories | `orderflow-engine-api/README(.es).md` | en, es |
+| API README: how to run, lever order, rounding policy, consistency model, golden tests, ADR, not included, operations, repositories | `orderflow-engine-api/README(.es).md` | en, es |
 | ADR-0001 order pricing and confirmation: the single, one-page ADR of A3 | `orderflow-engine-api/docs/adr/0001-order-pricing-and-confirmation(.es).md` | en, es |
-| Web README: how to run, prevention at component level | `orderflow-engine-web/README(.es).md` | en, es |
+| Web README: how to run (alone and with the API), screens and routes, prevention at component level, where the time spent beyond the one-hour cap is recorded | `orderflow-engine-web/README(.es).md` | en, es |
 | Specification set: constitution, SPEC, plan, TASKS, API contract, data model, architecture | `orderflow-engine-docs/spec/` | en |
 | Handoff: verified state, commands, PIT score, time spent | `orderflow-engine-docs/handoff/HANDOFF.md` | en |
