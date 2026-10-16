@@ -28,10 +28,17 @@ PostgreSQL, with Liquibase changelogs in `orderflow-engine-api/src/main/resource
 | Table | Columns | Keys and checks |
 |-------|---------|-----------------|
 | `currencies` | `code` char(3), `scale` smallint | PK `code`. `CHECK scale BETWEEN 0 AND 4`. Seeds: COP (0), USD (2) |
-| `countries` | `code` char(2), `currency_code`, `rounding_mode`, `gift_tax_policy`, `quote_ttl` interval | PK `code`. FK → `currencies`. `CHECK` on `rounding_mode` and on `gift_tax_policy IN ('EXEMPT','TAXED')`. Seeds: CO, EC |
+| `countries` | `code` char(2), `currency_code`, `rounding_mode`, `gift_tax_policy`, `quote_ttl` interval | PK `code`. FK → `currencies`. `CHECK rounding_mode` in the `java.math.RoundingMode` names except `UNNECESSARY`. `CHECK gift_tax_policy IN ('EXEMPT','TAXED')`. Seeds: CO, EC |
 | `tenants` | `id` text, `country_code`, `brand` | PK `id`. FK → `countries`. `UNIQUE (country_code, brand)`. Seeds: `co-alpha`, `ec-alpha` |
 
 Scale belongs to the currency. Rounding mode and gift tax policy are fiscal policy of the country, so two countries sharing a currency may still round differently.
+
+**Seed data** (`db/changelog/2026/2026-10-15-006-seed-co-and-ec.yaml` in `orderflow-engine-api`). It is demonstration data, chosen so the tests cover both scales and both gift tax policies; it is not a statement of real tax law.
+
+| Tenant | Country policy | Catalog and levers | Customers and credit |
+|--------|----------------|--------------------|----------------------|
+| `co-alpha` | COP scale 0, `HALF_UP`, gifts `TAXED`, quote TTL 15 min | Colas 350 ml (2,500) and 1.5 l, water 600 ml at 19% tax; chips 45 g at 5%. Tier rule on the 350 ml cola: 10 → 5%, 20 → 10%. Combo of 2 colas and 1 chips at 5,000. One water free for every 10 snacks, repeatable | Two customers; one has a 500,000 credit limit, the other pays cash |
+| `ec-alpha` | USD scale 2, `HALF_UP`, gifts `EXEMPT`, quote TTL 15 min | USD catalog at 15% tax, with plantain chips instead of chips. Family tier rule on colas: 12 → 4%, 24 → 8%. A combo at 3.99. A gift for a gross subtotal from 50.00 | A credit account with a 1,500.00 limit |
 
 ## 2. Catalog and levers (tenant-scoped)
 
@@ -74,8 +81,8 @@ The assignment says each SKU has a rate, so the rate is a column of the product.
 
 | Table | Columns | Keys and checks | Invariant |
 |-------|---------|-----------------|-----------|
-| `idempotency_keys` | `tenant_id`, `customer_id`, `idem_key`, `request_hash`, `order_id` NULL, `response_body` bytea, `created_at` | PK `(tenant_id, customer_id, idem_key)`. `UNIQUE (tenant_id, order_id)`. FK `(tenant_id, order_id)` → `orders` (RESTRICT). Index `(created_at)` for the purge | One owner per key. A concurrent duplicate blocks on the uncommitted row |
-| `outbox_events` | `tenant_id`, `id`, `order_id`, `destination`, `status`, `attempts`, `next_attempt_at`, `locked_until` NULL, `last_error`, `created_at` | PK `(tenant_id, id)`. FK `(tenant_id, order_id)` → `orders` (RESTRICT). `UNIQUE (tenant_id, order_id, destination)`. `CHECK destination IN ('PUSH','ERP')`. `CHECK status IN ('PENDING','SENT','DEAD')`. Partial indexes: `(next_attempt_at) WHERE status = 'PENDING'` and `(created_at) WHERE status = 'SENT'` | Written in the order transaction (P-04). One event per destination per order. The `id` is the `event_id` that consumers deduplicate on |
+| `idempotency_keys` | `tenant_id`, `customer_id`, `idem_key`, `request_hash` bytea (raw SHA-256), `order_id` NULL, `response_body` bytea NULL (set before commit; failures are never stored, so a committed row always has it), `created_at` | PK `(tenant_id, customer_id, idem_key)`. `UNIQUE (tenant_id, order_id)`. FK `(tenant_id, order_id)` → `orders` (RESTRICT). Index `(created_at)` for the purge | One owner per key. A concurrent duplicate blocks on the uncommitted row |
+| `outbox_events` | `tenant_id`, `id`, `order_id`, `destination`, `status`, `attempts`, `next_attempt_at`, `locked_until` NULL, `last_error` NULL, `created_at` | PK `(tenant_id, id)`. FK `(tenant_id, order_id)` → `orders` (RESTRICT). `UNIQUE (tenant_id, order_id, destination)`. `CHECK destination IN ('PUSH','ERP')`. `CHECK status IN ('PENDING','SENT','DEAD')`. Partial indexes: `(next_attempt_at) WHERE status = 'PENDING'` and `(created_at) WHERE status = 'SENT'` | Written in the order transaction (P-04). One event per destination per order. The `id` is the `event_id` that consumers deduplicate on |
 
 An event is **leased** while `status = 'PENDING' AND locked_until > now()`. The payload is built at send time from the order and its quote, which are immutable.
 

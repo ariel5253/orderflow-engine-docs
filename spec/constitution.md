@@ -4,7 +4,7 @@ title: Orderflow Engine — Constitution
 status: accepted
 lang: en
 pair: none
-last-reviewed: 2026-10-14
+last-reviewed: 2026-10-15
 ---
 
 # Orderflow Engine — Constitution
@@ -21,7 +21,7 @@ These are the non-negotiable principles. A principle is never waived to save tim
 | P-06 | **The domain is pure:** no Spring, JDBC, HTTP or clock access inside `pricing.domain` | A pure engine is deterministic, so it can be replayed and golden-tested | `DomainPurityArchTest`, the golden tests |
 | P-07 | **No country data in code.** Currency, scale, rounding mode, tax rates, gift policy and TTL are data | The platform serves several countries and brands | `GoldenPricingTest#multiCountry`. Seeds in Liquibase |
 | P-08 | **Every business rule has a test that has been seen failing.** A test is merged only after the guard it protects was broken once and the test caught it | A test that cannot fail proves nothing | TASKS cycle step 3. PIT mutation score ≥ 80% on `pricing.domain` |
-| P-09 | **English for engineering, Spanish for users.** Code, identifiers, comments, logs, tests, commits and technical documents are in English. End-user text comes only from i18n resources, with Spanish as default and English complete | One language for the team. The user's language must be switchable without code changes | `ErrorCatalogI18nTest`, the web no-literal-text test, the `check-docs` key-parity check |
+| P-09 | **English for engineering, Spanish for users.** Code, identifiers, comments, logs, tests, commits and technical documents are in English. End-user text comes only from i18n resources, with Spanish as default and English complete | One language for the team. The user's language must be switchable without code changes | `ErrorCatalogI18nTest`, the web check `scripts/no-literal-text.mjs`, the `check-docs` key-parity check |
 | P-10 | **Delivery documents exist in English and Spanish** with equivalent content | Both the team and the business must be able to read them | `check-docs` (pairs and heading parity) |
 | P-11 | **Documentation is governed.** Every document is indexed, answers one question, and lives in its assigned folder | Loose files rot and contradict each other | `check-docs` |
 | P-12 | **No claim without evidence.** Status, coverage and test results are stated only with the command that produced them | Documentation that promises unverified checks misleads the reader | [HANDOFF](../handoff/HANDOFF.md) §State |
