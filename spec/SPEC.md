@@ -667,7 +667,7 @@ The workspace contains sibling folders, and each one is a future repository with
 | `orderflow-engine-docs` | Specification, plan, contract, data model, architecture, governance, and the generated figures, progress chart and ADR in Word and PDF. From T-21, the delivery set in `delivery/` (with its screenshots and PNG figures) and its Word, PDF and PowerPoint outputs in `deliverables/delivery/` |
 | `orderflow-engine-tools` | Generators and checks: figures, progress chart, ADR in Word and PDF, documentation, integrity and consistency checks. Its own `Dockerfile` (Python and Node) |
 | `orderflow-engine-app` | Reserved for a future mobile app. Not built in this delivery |
-| `orderflow-engine-page` | The public page of the delivery (T-21): a static site for GitHub Pages, Spanish by default with an English switch. No Docker files and no `.env`. A local folder until it is published as a repository |
+| `orderflow-engine-page` | The public page of the delivery (T-21): a static site for GitHub Pages, Spanish by default with an English switch. No Docker files and no `.env`. Served by GitHub Pages at https://ariel5253.github.io/orderflow-engine-page/ |
 
 Each executable repository builds and runs with its own Docker files and its own `.env.example`. A `.env` is never versioned. Rules and their check: [repository-integrity.md](../governance/repository-integrity.md).
 
