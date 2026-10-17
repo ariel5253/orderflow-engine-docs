@@ -86,7 +86,8 @@ Project start: 2026-10-13. Cut line after: T-16. Update this table at the end of
 | T-15 | Retention housekeeping | D5 | done | 2026-10-15 |
 | T-18 | Wire the levers into quotes | D5 | done | 2026-10-15 |
 | T-16 | Final documentation and verification | D5 | done | 2026-10-15 |
-| T-17 | Web client: summary and full flow (optional) | D5 | todo | |
+| T-17 | Web client: summary and full flow (optional) | D5 | doing | |
+| T-19 | Fixes after the T-17 preview | D5 | doing | |
 
 ## 5. Commands to resume
 
@@ -104,19 +105,19 @@ orderflow-engine-infra/scripts/test-all.sh                 # API verify + web te
 (cd orderflow-engine-api && ./mvnw verify)                 # API only
 (cd orderflow-engine-api && docker compose up --build)     # run the service and its database
 # From T-17 on:
-(cd orderflow-engine-web && npm ci && npm test)            # web: no-literal-text check, then the specs in headless Chromium
+(cd orderflow-engine-web && docker build --target test .) # web: no-literal-text check, then the specs in headless Chromium, in a container
 (cd orderflow-engine-web && docker compose up --build)     # the web client alone; /api/ goes to an API on the host
 (cd orderflow-engine-infra && docker compose up --build)   # database, API and web client on one command
 ```
 
 Toolchain found on the build machine:
 - Java 21
-- Node 24
+- Node 24 (24.20 since 2026-10-15): the documentation and integrity checks; the web specs only when they run on the host instead of in their container
 - Docker Desktop (required by Testcontainers and by every `compose.yaml`)
 - Python 3.11 with `python-docx` and `pypdf` (tools; see its `requirements.txt`)
 - LibreOffice (tools: PDF conversion)
 
-Maven is not installed globally, so the Maven Wrapper is used. From T-17 on, the web specs also need Chromium: `npx playwright install chromium`, once, in `orderflow-engine-web`.
+Maven is not installed globally, so the Maven Wrapper is used. From T-17 on, the web specs run in a container (the `test` stage of the web `Dockerfile`), so they need only Docker. Running them on the host instead needs a Node version the pinned Angular accepts (22.22.3 or later in the 22 line, or 24.15 or later) and Chromium: `npx playwright install chromium`, once, in `orderflow-engine-web`.
 
 ## 6. Open decisions
 
@@ -142,7 +143,7 @@ Maven is not installed globally, so the Maven Wrapper is used. From T-17 on, the
 | TR-08 | Until T-02 added the first pricing domain class, `./mvnw -Pmutation verify` stopped with "No mutations found" on purpose | Resolved in T-02: the qualifying sentence is gone from both API READMEs, and the profile now reports the score in §3 |
 | TR-09 | A page served on one port that calls the API on another makes cross-origin calls, which the API would then have to allow with CORS | The client calls only relative `/api/` paths; nginx (or the `ng serve` proxy) forwards them to `API_UPSTREAM`. The API has no CORS configuration (architecture §1.1) |
 | TR-10 | The tools read task ids as `T-NN`. A `T-17a` heading, progress row or commit tag is silently left out of the counts, the chart and the cross-references | Split a large task into thematic pull requests that all end in `(T-NN)`. Slice labels live only inside the task's section of TASKS |
-| TR-11 | jsdom has no layout engine: every width is 0, so a 768 px wrapping check passes for any layout | Run the web specs in headless Chromium. Install it once with `npx playwright install chromium` |
+| TR-11 | jsdom has no layout engine: every width is 0, so a 768 px wrapping check passes for any layout | Run the web specs in headless Chromium: the `test` stage of the web `Dockerfile` brings it, on the Playwright image. On the host, install it once with `npx playwright install chromium` |
 | TR-12 | nginx resolves the `proxy_pass` host when it starts, and exits if the name does not resolve | In the full stack, the web service depends on `api`. Alone, compose maps `host.docker.internal` to the host gateway (`extra_hosts`), which Linux does not do by default |
 
 ## 8. Preparation phase pull requests

@@ -49,7 +49,7 @@ Response `201 Created`, with `Location: /api/v1/quotes/{quoteId}`. This example 
   "expiresAt": "2026-10-14T15:15:00Z",
   "currency": "COP",
   "lines": [{
-    "sku": "BEV-COLA-350", "description": "Cola 350 ml", "qty": 25, "isGift": false,
+    "sku": "BEV-COLA-350", "description": "Gaseosa cola 350 ml", "qty": 25, "isGift": false,
     "unitPrice": "2500", "gross": "62500",
     "discounts": [ { "origin": "TIER:0192f3c4-…", "amount": "2750" } ],
     "comboAllocations": [],
@@ -71,7 +71,7 @@ Response `201 Created`, with `Location: /api/v1/quotes/{quoteId}`. This example 
 |-------|--------|------|
 | `VALIDATION_FAILED` | 400 | Malformed request: a body that is not a JSON object; a missing or null `paymentMethod`, `lines`, line, `sku` or `qty`; an unknown `paymentMethod`; a `qty` that is not a JSON number; a missing `X-Tenant-Id` or `X-Customer-Id`; an `X-Customer-Id` that is not a UUID |
 | `CART_EMPTY` | 400 | `lines` is empty |
-| `INVALID_QUANTITY` | 400 | `qty ≤ 0`, not an integer, or above 2,147,483,647, also after the lines of a repeated SKU are merged |
+| `INVALID_QUANTITY` | 400 | `qty ≤ 0`, not an integer, or above 1,000,000, also after the lines of a repeated SKU are merged; or a gift quantity a rule derives above 1,000,000 (BR-00) |
 | `TENANT_NOT_FOUND` | 400 | Unknown `X-Tenant-Id` |
 | `CUSTOMER_NOT_FOUND` | 404 | Unknown customer for the tenant |
 | `UNKNOWN_SKU` | 422 | SKU unknown, or not sold by this tenant |
@@ -165,8 +165,8 @@ Read-only. It lists what the tenant sells, so a client can build a cart. It chan
 {
   "currency": "COP",
   "items": [
-    { "sku": "BEV-COLA-1500", "description": "Cola 1.5 l", "listPrice": "5200", "taxRate": "0.190000" },
-    { "sku": "BEV-COLA-350", "description": "Cola 350 ml", "listPrice": "2500", "taxRate": "0.190000" }
+    { "sku": "BEV-COLA-1500", "description": "Gaseosa cola 1,5 l", "listPrice": "5200", "taxRate": "0.190000" },
+    { "sku": "BEV-COLA-350", "description": "Gaseosa cola 350 ml", "listPrice": "2500", "taxRate": "0.190000" }
   ]
 }
 ```

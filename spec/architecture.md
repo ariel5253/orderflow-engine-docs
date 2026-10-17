@@ -54,7 +54,7 @@ The Angular client calls only relative paths (`/api/v1/…`). Whoever serves the
 | Module | Kind | Contains |
 |--------|------|----------|
 | `pricing.domain` | Domain (pure) | `Money`, `CurrencyPolicy`, `PricingEngine`, lever steps, `Breakdown` |
-| `quoting` | Application | `CreateQuoteUseCase`, `GetQuoteUseCase`. Ports: `SnapshotProvider`, `QuoteRepository`, `CreditAdvisor` |
+| `quoting` | Application | `CreateQuoteUseCase`, `GetQuoteUseCase`, `ListProductsUseCase`. Ports: `SnapshotProvider`, `QuoteRepository`, `CreditAdvisor`, `ProductCatalog` (read-only) |
 | `ordering` | Application | `ConfirmOrderUseCase`, `GetOrderUseCase`, `ListOrdersUseCase`. Ports: `OrderRepository`, `CreditLedger`, `IdempotencyStore`, `OutboxWriter` |
 | `outbox` | Application | `OutboxRelay`, `HousekeepingJob`. Ports: `PushNotificationPort`, `ErpPublisherPort`, `OutboxRepository` |
 | `adapters.in.web` | Driving adapter | Controllers, DTOs, `ProblemDetailsAdvice`, locale and correlation filters |

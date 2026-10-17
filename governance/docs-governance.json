@@ -100,6 +100,16 @@
       "No implementado, a propósito",
       "Qué revisaría en un code review",
       "Riesgo y mitigación"
+    ],
+    "orderflow-engine-web/README.md": [
+      "Scope",
+      "How to run",
+      "Prevention at component level"
+    ],
+    "orderflow-engine-web/README.es.md": [
+      "Alcance",
+      "Cómo ejecutarlo",
+      "Prevención a nivel de componente"
     ]
   },
   "integrity": {

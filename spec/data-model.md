@@ -33,7 +33,7 @@ PostgreSQL, with Liquibase changelogs in `orderflow-engine-api/src/main/resource
 
 Scale belongs to the currency. Rounding mode and gift tax policy are fiscal policy of the country, so two countries sharing a currency may still round differently.
 
-**Seed data** (`db/changelog/2026/2026-10-15-006-seed-co-and-ec.yaml` in `orderflow-engine-api`). It is demonstration data, chosen so the tests cover both scales and both gift tax policies; it is not a statement of real tax law.
+**Seed data** (`db/changelog/2026/2026-10-15-006-seed-co-and-ec.yaml` in `orderflow-engine-api`). It is demonstration data, chosen so the tests cover both scales and both gift tax policies; it is not a statement of real tax law. Product and customer names are written in the tenants' language, Spanish (SPEC §10.1): `2026-10-16-001-seed-names-in-spanish.yaml` renames the seeded rows, with a rollback to the original names.
 
 | Tenant | Country policy | Catalog and levers | Customers and credit |
 |--------|----------------|--------------------|----------------------|

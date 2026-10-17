@@ -20,7 +20,7 @@ last-reviewed: 2026-10-15
 | # | Constraint |
 |---|-----------|
 | GC-1 | SPEC.md and this file are the source of truth. A behavior change updates SPEC first |
-| GC-2 | Each task ends green: `./mvnw verify` (API), `node orderflow-engine-tools/docs-check/check-docs.mjs` and `node orderflow-engine-tools/integrity/check-integrity.mjs`. From T-01 on, `orderflow-engine-infra/scripts/test-all` runs all three. From T-17 on, it also runs `npm test` in `orderflow-engine-web` |
+| GC-2 | Each task ends green: `./mvnw verify` (API), `node orderflow-engine-tools/docs-check/check-docs.mjs` and `node orderflow-engine-tools/integrity/check-integrity.mjs`. From T-01 on, `orderflow-engine-infra/scripts/test-all` runs all three. From T-17 on, it also runs the web tests in their container (`docker build --target test` in `orderflow-engine-web`), so the host needs no Node |
 | GC-3 | Each task enters through one or more pull requests into `dev` (into `main` in `orderflow-engine-docs`), squash-merged, then the branch is deleted. A task too large to review in one sitting is split into thematic pull requests ([pull-request-rules](../governance/pull-request-rules.md), [golden rule](../governance/golden-rule.md)). Each title is a one-line commit of at most 60 characters ending with the task tag ([commit-conventions](../governance/commit-conventions.md)) |
 | GC-4 | Stage only the task's own files. Never `git add -A`. Code repositories keep `dev` and `main`. `orderflow-engine-docs` keeps only `main` ([branches-and-environments](../governance/branches-and-environments.md)) |
 | GC-5 | No `TODO`, placeholders or dead code. A smaller scope never means a lower standard |
@@ -62,7 +62,7 @@ These are the risky edges. A reviewer should check each one in the task that own
 | D2 | T-04 … T-07 |
 | D3 | T-08 … T-10 |
 | D4 | T-11 … T-14 |
-| D5 | T-15, T-18, T-16, then T-17 slice by slice |
+| D5 | T-15, T-18, T-16, then T-17 slice by slice, then T-19 |
 
 **MVP cut line after T-16.** T-17 is the optional plus of the assignment, extended by the product owner to the full web flow (SPEC §14.3). It is estimated at about 13.5 h, more than D5 holds after T-16, and its slices are cut-safe (T-17, Delivery). Pull request 1 of T-17 (the specification) lands first, as GC-9 requires; every other T-17 pull request starts only after T-16 is merged, and T-17 never delays T-12…T-16. At the end of D4, progress is checked against this plan (HANDOFF OD-02). Any further cut, including the T-17 slices not merged at delivery, is agreed explicitly and recorded under "Not included" in the API README.
 
@@ -239,7 +239,7 @@ These are the risky edges. A reviewer should check each one in the task that own
 - **Starts:** pull request 1 (the specification) lands first, as GC-9 requires; it was delivered inside `docs(spec): align spec with built API and web plan (T-16)`. Every other T-17 pull request starts only after T-16 is merged. T-17 never delays T-12 … T-16: when time runs short, slices are cut, never the delivery date.
 - **Depends on:** T-10 (E-01, E-02) for T-17a. T-11 (E-03), T-13 (E-04) and E-07 for T-17b. T-13 (E-05) for T-17c.
 - **Delivery:** the thematic pull requests below, in that order (GC-3): docs → T-17a → infra → E-07 → T-17b → T-17c → tools → time record. Slice labels (T-17a … T-17c) name pull requests, not tasks: every commit ends in `(T-17)` and the HANDOFF tracks T-17 as one row, because the tools read task ids as `T-NN` (HANDOFF TR-10). E-07 is cut with the cart: if T-17b is not merged at delivery, the E-07 pull request is not merged either. After each web slice the client builds, runs in Docker and passes its tests, so a cut after any slice leaves no route, key or endpoint half-wired. The slices not merged at delivery are listed under "Not included" in the API README.
-- **Web test runner:** `npm test` runs `scripts/no-literal-text.mjs`, then `ng test --watch=false`. The Angular version is the latest stable release when T-17a starts, pinned to an exact version in `package.json`. Specs run in headless Chromium, through the Angular CLI's Vitest runner in browser mode with Playwright, because jsdom has no layout engine and a 768 px wrapping check passes there for any layout (HANDOFF TR-11). Every spec that reaches the API uses a simulated backend (`HttpTestingController`) and asserts the exact request: method, path, headers and body. No spec opens a socket.
+- **Web test runner:** `npm test` runs `scripts/no-literal-text.mjs`, then `ng test --watch=false`. It runs inside a container, by the owner's decision of 2026-10-15: the `test` stage of the web `Dockerfile` starts from the official Playwright image whose tag matches the pinned `playwright` version exactly (`mcr.microsoft.com/playwright:v<version>-noble`, which holds Node and Chromium), runs `npm ci`, then `npm test`; `docker build --target test .` is the web test command, so the host needs only Docker. `npm test` on the host stays possible, with a Node version the pinned Angular accepts and `npx playwright install chromium` once. The Angular version is the latest stable release when T-17a starts, pinned to an exact version in `package.json`. Specs run in headless Chromium, through the Angular CLI's Vitest runner in browser mode with Playwright, because jsdom has no layout engine and a 768 px wrapping check passes there for any layout (HANDOFF TR-11). Every spec that reaches the API uses a simulated backend (`HttpTestingController`) and asserts the exact request: method, path, headers and body. No spec opens a socket.
 
 | # | Pull request | Repository | Commit | Estimate |
 |---|--------------|------------|--------|----------|
@@ -259,13 +259,13 @@ The order summary over E-02 and what it needs, nothing more, so its time can be 
 - **Covers:** AC-42 … AC-46, AC-51 (the notice), RF-9.
 - **Files (`orderflow-engine-web`):**
   - the Angular workspace (standalone components, router, `HttpClient`) with the scripts `start`, `build` and `test`
-  - `src/app/core/`: `store-context.ts`, `api-headers.interceptor.ts` (`X-Tenant-Id`, `X-Customer-Id`, `Accept-Language`), `quote-api.ts` (E-02), `money.pipe.ts` (`Intl.NumberFormat` over the API string, with `app.formatLocale`)
+  - `src/app/core/`: `store-context.ts`, `api-headers.interceptor.ts` (`X-Tenant-Id`, `X-Customer-Id`, `Accept-Language`), `quote-api.ts` (E-02), `money.pipe.ts` (`Intl.NumberFormat` over the API string, with `app.formatLocale`), `format.ts` (rate, count and date pipes over `Intl`), `language.ts` (`?lang=`, the dictionaries), `problem.ts` (the three failure kinds: a problem, no answer, and an answer the API never sends; and which of them retry)
   - `src/app/ui/`: `ui-text`, `ui-action-bar`, `ui-product-image`, `ui-problem-notice`
-  - `src/app/pages/order-summary/` (route `/quotes/:quoteId`)
-  - `public/i18n/{es,en}.json` (`app.formatLocale`: `es-419` and `en`), `public/config/stores.json` (the seeded demo stores, A-06), `public/products/<sku>.svg` and `placeholder.svg`
-  - `src/testing/`: `order-summary.fixture.json` (an E-02 body, with `discounts[]` sorted by origin as the API sends them) and `long-names.json`
+  - `src/app/pages/order-summary/` (route `/quotes/:quoteId`; `order-summary-keys.ts` builds the status, origin and line-count keys, the count form through `Intl.PluralRules`)
+  - `public/i18n/{es,en}.json` (`app.formatLocale`: `es-419` and `en`; `problem.network.title` and `problem.network.detail`, which `ui-problem-notice` needs for a request with no answer), `public/config/stores.json` (the seeded demo stores, A-06), `public/products/<sku>.svg` and `placeholder.svg`
+  - `src/testing/`: `translations.ts`, `screen-checks.ts` (the layout measures, among them `actionBarObstructions`), `text-imports.d.ts`, `order-summary.fixture.json` (an E-02 body, with `discounts[]` sorted by origin as the API sends them) and `long-names.json`
   - `scripts/no-literal-text.mjs`
-  - `proxy.conf.mjs`, `nginx/default.conf.template`, `Dockerfile` (build with Node, serve with unprivileged nginx on port 8080, exact image tags), `.dockerignore`, `compose.yaml`, `.env.example` (`WEB_PORT`, `API_UPSTREAM`)
+  - `proxy.conf.mjs`, `nginx/default.conf.template`, `Dockerfile` (a `test` stage that runs `npm ci` and `npm test` on the Playwright image; a build stage with Node; served by unprivileged nginx on port 8080; exact image tags), `.dockerignore`, `compose.yaml`, `.env.example` (`WEB_PORT`, `API_UPSTREAM`)
   - `README(.es).md`: Scope, How to run, Prevention at component level, listing only what this slice delivers
 - **Files (`orderflow-engine-docs`, in the same change):** the web README's required headings in `governance/docs-governance.json`, for `README.md` (Scope, How to run, Prevention at component level) and for `README.es.md` (their Spanish pairs), so `check-docs` verifies AC-45 from this slice on. It merges right after the web pull request, never before it, so `check-docs` never requires a heading the web README lacks.
 - **Tests:**
@@ -278,15 +278,15 @@ The order summary over E-02 and what it needs, nothing more, so its time can be 
   - `i18n-keys.spec.ts` (AC-46): `es` and `en` have the same keys, each sets `app.formatLocale`, every key the code uses exists (also keys built from an enum value), and no key is unused
   - `scripts/no-literal-text.mjs` (RF-9, P-09): no template holds literal text; text comes from `translate` or from data
 - **Done when:**
-  - `npm test` passes, and `check-docs` passes with the web README's required headings
+  - `docker build --target test .` passes (the specs in the container), and `check-docs` passes with the web README's required headings
   - `docker compose up --build` in `orderflow-engine-web`, with the API started from its own repository, serves the client on `WEB_PORT`; a quote created with `curl` through `http://localhost:8081/api/v1/quotes`, with the headers of the first `stores.json` entry, renders at its route `/quotes/:quoteId`
   - no response the browser receives carries a CORS header
   - the measured time of the screen and that of the container are recorded apart in the HANDOFF
 - **Commit:** `feat(web): add order summary screen (T-17)`
 
 #### The web client in the full stack, pull request 3
-- **Files (`orderflow-engine-infra`):** the `web` service in `compose.yaml` (built from `../orderflow-engine-web`, depends on `api`, `API_UPSTREAM: http://api:${API_PORT:-8080}`, port `${WEB_PORT:-8081}:8080`), `WEB_PORT` in `.env.example`, the steps "web install" (`npm ci`) and "web tests" (`npm test`) in `scripts/test-all.{sh,ps1}`, `README(.es).md`.
-- **Done when:** `docker compose up --build` starts the database, the API and the client; `http://localhost:8081` reaches the API through `/api/`; `test-all` ends with `test-all: OK (API verify, web tests, documentation check, integrity check)`, and a failing `npm test` fails `test-all` in PowerShell too (proven once).
+- **Files (`orderflow-engine-infra`):** the `web` service in `compose.yaml` (built from `../orderflow-engine-web`, depends on `api`, `API_UPSTREAM: http://api:${API_PORT:-8080}`, port `${WEB_PORT:-8081}:8080`), `WEB_PORT` in `.env.example`, the step "web tests" (`docker build --target test` in `../orderflow-engine-web`) in `scripts/test-all.{sh,ps1}`, `README(.es).md`.
+- **Done when:** `docker compose up --build` starts the database, the API and the client; `http://localhost:8081` reaches the API through `/api/`; `test-all` ends with `test-all: OK (API verify, web tests, documentation check, integrity check)`, and a failing web spec fails `test-all` in PowerShell too (proven once).
 - **Commit:** `feat(infra): serve web through api proxy (T-17)`
 
 #### Product list (E-07), pull request 4
@@ -311,7 +311,7 @@ The actions that open My orders join in T-17c.
   - `src/app/pages/cart/` (routes `/cart` and `/`): the product grid through `ui-product-image`, a quantity stepper, cash or credit, and the action bar with the units and "Get quote" (E-01)
   - `src/app/pages/order-summary/`: "Confirm order" and "Edit cart"; the expired, confirmed and credit-short states; the §10.5 action of each problem
   - `src/app/pages/order/` (route `/orders/:orderId`): the E-04 body, with "Order confirmed" after a 201 and "This order was already recorded" after a replay
-  - the new keys in `public/i18n/{es,en}.json`, among them `cart.actions.review`, `problem.network.title` and `problem.network.detail`
+  - the new keys in `public/i18n/{es,en}.json`, among them `cart.actions.review`
 - **Tests:**
   - `cart.spec.ts`: the E-07 products in SKU order, with list prices and unit counts and never a subtotal or a total; `POST /api/v1/quotes` carries only lines with a quantity above zero; a 201 opens `/quotes/:quoteId`
   - `confirm-idempotency.spec.ts` (AC-49): two taps send one request (`expectOne`); a network error and a retry send the same `Idempotency-Key` and body; a reload keeps the key; a new quote gets a new key; "Confirm order" is disabled while the request is in flight; `Idempotent-Replayed: true` leads to "This order was already recorded"; the store's cart is emptied after the 201
@@ -319,7 +319,7 @@ The actions that open My orders join in T-17c.
   - `problem-actions.spec.ts` (AC-51): every §8 code, and a request with no answer, on the cart, the summary and the order, shows the notice with exactly the §10.5 action, and each action does what the table says
   - `screen-rules.spec.ts` (AC-42 … AC-44): the cart, the order and the open store picker, with long names at 768 × 1024 and 375 × 812, pass the checks of `order-summary.spec.ts`; the action bar stays above a simulated keyboard while a quantity is typed; the order renders E-04 through the same breakdown components as the summary
   - `api-headers.interceptor.spec.ts`, added case: switching the store changes both headers
-- **Done when:** `npm test` passes, and in the full stack a `co-alpha` cart goes by clicks from cart to quote to a confirmed order with its number, with no console error.
+- **Done when:** `docker build --target test .` passes, and in the full stack a `co-alpha` cart goes by clicks from cart to quote to a confirmed order with its number, with no console error.
 - **Commit:** `feat(web): add cart and idempotent confirmation (T-17)`
 
 #### T-17c: My orders and the full-flow spec, pull request 6
@@ -329,7 +329,7 @@ The actions that open My orders join in T-17c.
   - `history-read-your-writes.spec.ts` (AC-52): E-05 is read on every visit, as `GET /api/v1/orders?customerId=` with the selected customer; items newest first, with number, date and total in the body's `currency`; after a 201 the new order number comes first, with the confirmed total; the empty state; an unknown customer (a stale `stores.json`) shows the 404 `CUSTOMER_NOT_FOUND` notice with "Go shopping"
   - `flow.spec.ts` (AC-52): cart → quote → confirm → order → My orders against the simulated backend, asserting each request, and the cart emptied after the 201
   - `screen-rules.spec.ts` and `problem-actions.spec.ts`, added cases: My orders with long names at both viewports, and its default action
-- **Done when:** `npm test` and `test-all` pass, and the full stack runs the whole flow by clicks in es and en.
+- **Done when:** `docker build --target test .` and `test-all` pass, and the full stack runs the whole flow by clicks in es and en.
 - **Commit:** `feat(web): add order history screen (T-17)`
 
 #### Figures and time record, pull requests 7 and 8
@@ -337,3 +337,13 @@ The actions that open My orders join in T-17c.
 - **Files (`orderflow-engine-api`):** in `README(.es).md`, under "Not included", a "Time spent" paragraph with the measured time in four rows (the take-home; the assignment's screen; the container, compose and `test-all` wiring; the extension), listing the slices not merged if T-17 is cut; the "CORS configuration" row of "Not included" (not needed: the web client's nginx forwards `/api/`), placed before the SonarQube row; and the `orderflow-engine-web` row of "Repositories".
 - **Done when:** the figures match architecture §1 and §2, both API READMEs carry measured times only, and `test-all` passes.
 - **Commits:** `docs(tools): relabel web and products in figures (T-17)`, `docs(api): record web time and scope (T-17)`
+
+### T-19: Fixes after the T-17 preview
+The owner walked the full stack after T-17 and ordered these fixes on 2026-10-16. Each is one thematic pull request, in this order (GC-3): docs → api seeds → api quantities → web → infra.
+- **Covers:** AC-14, AC-46, AC-52, BR-00, SPEC §9, §10.1, §10.3, §11.
+- **Seed names (`orderflow-engine-api`):** `db/changelog/2026/2026-10-16-001-seed-names-in-spanish.yaml` renames the seeded products and customers to the tenants' language, with a rollback to the original names (`LiquibaseRollbackIT` proves it): BEV-COLA-1500 "Gaseosa cola 1,5 l", BEV-COLA-350 "Gaseosa cola 350 ml", BEV-WATER-600 "Agua 600 ml", SNK-CHIPS-45 "Papas fritas 45 g", SNK-PLANTAIN-45 "Chifles 45 g"; customers "Tienda Norte" and "Tienda Sur" (`co-alpha`), "Tienda Quito" and "Tienda Guayaquil" (`ec-alpha`). An applied changeset is never edited. Every test and fixture that reads a seeded name follows. Commit: `feat(db): seed catalog in the tenants' language (T-19)`.
+- **Quantities (`orderflow-engine-api`):** BR-00 caps a line quantity at 1,000,000 (also after merging) and a derived gift quantity at the same bound, both 400 `INVALID_QUANTITY`; the gift quantity is derived with overflow-checked arithmetic. Tests: the bound itself and one above it through E-01; a gift rule whose derived quantity passes the bound answers 400, never 500. Commit: `feat(quoting): cap line and gift quantities (T-19)`.
+- **Web (`orderflow-engine-web`):** the currency code next to the amounts that need it (SPEC §10.3): "Prices in {currency}" above the cart grid, and the code after each action-bar total and each My orders total; the ES/EN choice kept in browser storage and restored on load, `?lang=` winning and replacing it (SPEC §9); `public/config/stores.json` and the test fixtures use the Spanish seed names; `restart: unless-stopped` in `compose.yaml`. Tests: `language.spec.ts` (reload keeps the choice, `?lang=` replaces it, storage unavailable falls back to `es`), the currency code in `cart.spec.ts` and `screen-rules.spec.ts` for COP and USD. Commit: `feat(web): show currency codes and keep language (T-19)`.
+- **Infra (`orderflow-engine-infra`):** `restart: unless-stopped` on every service of the full-stack compose; an end-to-end step in `test-all.{sh,ps1}`, after the web tests: it starts the full stack under its own compose project and ports, runs a Playwright spec on the official image whose tag matches the web's pinned `playwright` against it (cart → quote → confirm → order → My orders, in es and en, with the order number read back from E-05 through the client's origin), and stops the stack with `down -v`, also when the spec fails. The final line becomes `test-all: OK (API verify, web tests, end-to-end, documentation check, integrity check)`. Commits: `build(infra): restart the stack with docker (T-19)`, `test(infra): run the full flow against the stack (T-19)`.
+- **Done when:** each repository's own check passes (`./mvnw verify`, `docker build --target test .`), `test-all` ends with the line above, and the full stack shows Spanish names, currency codes and a remembered language by clicks.
+- **Commit:** `feat(db): seed catalog in the tenants' language (T-19)`, the first of the five commits named in the bullets above.
