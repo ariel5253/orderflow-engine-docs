@@ -83,7 +83,7 @@ Documents cite each other by code, not by page. Every code family has a distinct
 | `A-01`…`A-10` | Assumptions | SPEC §13 |
 | `AC-01`…`AC-53` | Acceptance criteria. Removed rows keep their gap | SPEC §14.2 |
 | `DEC-…`, `RISK-…` | Technical decisions, risks | plan |
-| `T-00`…`T-19`, `GC-…`, `RF-…` | Tasks, global constraints, review focus | TASKS |
+| `T-00`…`T-20`, `GC-…`, `RF-…` | Tasks, global constraints, review focus | TASKS |
 | `E-01`…`E-07`, `BD-…`, `GAP-…` | Operation cards, behavior decisions, known gaps | api-contract |
 | `DM-…` | Data-model notes | data-model |
 | `ADR-0001` | The architecture decision record | `orderflow-engine-api/docs/adr/` |

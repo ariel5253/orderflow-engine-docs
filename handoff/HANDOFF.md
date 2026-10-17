@@ -88,6 +88,7 @@ Project start: 2026-10-13. Cut line after: T-16. Update this table at the end of
 | T-16 | Final documentation and verification | D5 | done | 2026-10-15 |
 | T-17 | Web client: summary and full flow (optional) | D5 | done | 2026-10-16 |
 | T-19 | Fixes after the T-17 preview | D5 | done | 2026-10-16 |
+| T-20 | Seed Guatemala and Peru | D5 | doing | |
 
 ## 5. Commands to resume
 
