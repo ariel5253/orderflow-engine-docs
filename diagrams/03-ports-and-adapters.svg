@@ -28,13 +28,13 @@
   <text class="keyt" x="980" y="92" text-anchor="start" font-size="11" font-weight="600" fill="#0369a1">Driven adapters</text>
   <rect class="node" x="40" y="130" width="170" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
   <text class="t" x="125" y="154.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">REST controllers</text>
-  <text class="s" x="125" y="170.5" text-anchor="middle" font-size="10.5" fill="#475569">quotes · orders</text>
+  <text class="s" x="125" y="170.5" text-anchor="middle" font-size="10.5" fill="#475569">quotes · orders · products</text>
   <rect class="node" x="40" y="300" width="170" height="56" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
   <text class="t" x="125" y="324.5" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Scheduled jobs</text>
   <text class="s" x="125" y="340.5" text-anchor="middle" font-size="10.5" fill="#475569">relay · housekeeping</text>
   <rect class="node" x="270" y="110" width="180" height="270" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
   <text class="t" x="360" y="140" text-anchor="middle" font-size="11.5" font-weight="600" fill="#0f172a">CreateQuote</text>
-  <text class="t" x="360" y="182" text-anchor="middle" font-size="11.5" font-weight="600" fill="#0f172a">GetQuote</text>
+  <text class="t" x="360" y="182" text-anchor="middle" font-size="11.5" font-weight="600" fill="#0f172a">GetQuote · ListProducts</text>
   <text class="t" x="360" y="224" text-anchor="middle" font-size="11.5" font-weight="600" fill="#0f172a">ConfirmOrder</text>
   <text class="t" x="360" y="266" text-anchor="middle" font-size="11.5" font-weight="600" fill="#0f172a">GetOrder · ListOrders</text>
   <text class="t" x="360" y="308" text-anchor="middle" font-size="11.5" font-weight="600" fill="#0f172a">RelayOutbox</text>
