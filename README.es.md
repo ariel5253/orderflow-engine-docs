@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-Documentación de **Orderflow Engine**: el motor de precios y la confirmación idempotente de pedidos de un marketplace B2B de bebidas que opera en varios países. El enunciado original está en [`assignment/`](assignment/). El código entregable, su README y el ADR viven en el repositorio `orderflow-engine-api`. Los demás repositorios se citan por nombre, sin enlace, para que cada uno funcione clonado solo.
+Documentación de **Orderflow Engine**: el motor de precios y la confirmación idempotente de pedidos de un marketplace B2B de bebidas que opera en varios países. El enunciado original está en [`assignment/`](assignment/). El código entregable, su README y el ADR viven en el repositorio `orderflow-engine-api`. Los documentos de entrega (manual de usuario, manual técnico, informe de arquitectura, recorrido de la solución y fuente de la presentación) viven en [`delivery/`](delivery/), y la página pública en la carpeta `orderflow-engine-page`. Los demás repositorios se citan por nombre, sin enlace, para que cada uno funcione clonado solo.
 
 > **¿Abres una sesión nueva? Empieza por [`handoff/HANDOFF.md`](handoff/HANDOFF.md)** (en inglés). Tiene el estado verificado, los comandos para retomar, las decisiones abiertas y las trampas ya encontradas.
 
@@ -15,7 +15,11 @@ orderflow-engine-docs/
 ├─ assignment/                el enunciado original, intocable
 ├─ diagrams/                  figuras SVG generadas, numeradas por orden de aparición
 ├─ governance/                regla de oro, ramas, pull requests, commits, reglas de documentación
+├─ delivery/                  los documentos de entrega en inglés y español: manuales, informe, recorrido, fuente de la presentación
+│  ├─ screenshots/            las pantallas del cliente web, una carpeta por idioma (en, es)
+│  └─ figures/                los diagramas como imágenes PNG, uno por cada SVG
 └─ deliverables/             ADR en Word y PDF (generados) y manifest.json con el origen de cada uno
+   └─ delivery/               los documentos de entrega en Word y PDF, y la presentación en PowerPoint (generados)
 ```
 
 **La regla de orden de esta carpeta, en una línea: en la raíz solo están los README y la licencia.** Todo lo demás vive en una carpeta, y el glosario de abajo dice quién edita cada una.
@@ -36,6 +40,10 @@ orderflow-engine-docs/
 | [`diagrams/`](diagrams/) | Las figuras SVG | **No.** Las genera y verifica `orderflow-engine-tools` |
 | [`governance/`](governance/) | Regla de oro, ramas, pull requests, commits, reglas de documentación, plantillas, configuración del check | Sí |
 | [`deliverables/`](deliverables/) | El ADR en Word y PDF, en inglés y español, y `manifest.json` con la fuente y el hash de cada uno | **No.** Los genera `orderflow-engine-tools` |
+| [`delivery/`](delivery/) | Los documentos de entrega, cada uno en inglés y español: manual de usuario, manual técnico, informe de arquitectura, recorrido de la solución y fuente de la presentación | Sí |
+| [`delivery/screenshots/`](delivery/screenshots/) | Las pantallas del cliente web, una carpeta por idioma (`en`, `es`), con los nombres `01-store-picker` … `09-mobile-summary` | **No.** Se capturan del stack completo en ejecución |
+| [`delivery/figures/`](delivery/figures/) | Una imagen PNG por cada figura SVG de `diagrams/`, con el mismo nombre base | **No.** Se exportan desde `diagrams/` |
+| [`deliverables/delivery/`](deliverables/delivery/) | El manual de usuario, el manual técnico, el informe de arquitectura y el recorrido de la solución en Word y PDF, y la presentación en PowerPoint, en inglés y español | **No.** Se generan desde las fuentes de `delivery/` |
 
 ## Mapa de documentos
 
@@ -66,6 +74,19 @@ Un documento que no aparece aquí no existe (ver las [reglas de documentación](
 | README-INFRA | `orderflow-engine-infra/README.es.md` | ¿Cómo se levanta el stack completo y cómo se ejecutan todas las pruebas? | en, es | planeado |
 | README-TOOLS | `orderflow-engine-tools/README.es.md` | ¿Qué genera y verifica cada herramienta, y cómo se ejecuta? | en, es | aceptado |
 | README-APP | `orderflow-engine-app/README.es.md` | ¿Por qué esta carpeta está reservada? | en, es | reservado |
+| README-PAGE | `orderflow-engine-page/README.es.md` | ¿Qué muestra la página pública y cómo se publica en GitHub Pages? | en, es | aceptado |
+
+### Documentos de entrega
+
+Los documentos de entrega se escriben para lectores de fuera del equipo, así que cada uno indica también su público. Cada uno es un par, `name.md` y `name.es.md`, con el mismo número de encabezados. Sus versiones en Word, PDF y PowerPoint están en [`deliverables/delivery/`](deliverables/delivery/).
+
+| ID | Documento | Pregunta que responde | Público | Idioma | Estado |
+|----|-----------|-----------------------|---------|--------|--------|
+| USER-MANUAL | [Manual de usuario](delivery/user-manual.es.md) | ¿Cómo elige un tendero su tienda, arma el carrito, confirma un pedido y lo vuelve a encontrar en el cliente web? | Tenderos que hacen pedidos desde el cliente web | en, es | aceptado |
+| TECHNICAL-MANUAL | [Manual técnico](delivery/technical-manual.es.md) | ¿Cómo se instala, ejecuta, configura, opera, prueba, mantiene y diagnostica Orderflow Engine, incluido cómo se agrega una tienda, un producto o una palanca con un changeset de Liquibase? | Desarrolladores y operadores | en, es | aceptado |
+| ARCHITECTURE-REPORT | [Informe de arquitectura](delivery/architecture-report.es.md) | ¿Qué artefactos componen Orderflow Engine, y qué hace cada uno y por qué? | Arquitectos y revisores técnicos | en, es | aceptado |
+| SOLUTION-WALKTHROUGH | [Recorrido de la solución](delivery/solution-walkthrough.es.md) | ¿Cómo se resolvió el enunciado, paso a paso? | Evaluadores del enunciado | en, es | aceptado |
+| PRESENTATION | [Fuente de la presentación](delivery/presentation.es.md) | ¿Qué tiene el sistema y cómo funciona, paso a paso, diapositiva por diapositiva? | Evaluadores e interesados en la presentación | en, es | aceptado |
 
 ## Códigos que verás citados
 
@@ -83,7 +104,7 @@ Los documentos se citan entre sí por código, no por página. Cada familia de c
 | `A-01`…`A-10` | Supuestos | SPEC §13 |
 | `AC-01`…`AC-53` | Criterios de aceptación. Las filas eliminadas conservan su hueco | SPEC §14.2 |
 | `DEC-…`, `RISK-…` | Decisiones técnicas, riesgos | plan |
-| `T-00`…`T-20`, `GC-…`, `RF-…` | Tareas, restricciones globales, foco de revisión | TASKS |
+| `T-00`…`T-21`, `GC-…`, `RF-…` | Tareas, restricciones globales, foco de revisión | TASKS |
 | `E-01`…`E-07`, `BD-…`, `GAP-…` | Fichas de operación, decisiones de comportamiento, huecos conocidos | api-contract |
 | `DM-…` | Notas del modelo de datos | data-model |
 | `ADR-0001` | El registro de decisión de arquitectura | `orderflow-engine-api/docs/adr/` |

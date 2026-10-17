@@ -4,6 +4,7 @@
     "orderflow-engine-app",
     "orderflow-engine-docs",
     "orderflow-engine-infra",
+    "orderflow-engine-page",
     "orderflow-engine-tools",
     "orderflow-engine-web"
   ],
@@ -24,6 +25,7 @@
     "*/README.md",
     "*/README.es.md",
     "orderflow-engine-api/docs/adr/*.md",
+    "orderflow-engine-docs/delivery/*.md",
     "orderflow-engine-docs/handoff/*.md",
     "orderflow-engine-docs/spec/*.md",
     "orderflow-engine-docs/governance/**/*.md"
@@ -31,7 +33,8 @@
   "bilingual": [
     "*/README.md",
     "*/README.es.md",
-    "orderflow-engine-api/docs/adr/*.md"
+    "orderflow-engine-api/docs/adr/*.md",
+    "orderflow-engine-docs/delivery/*.md"
   ],
   "frontMatter": {
     "required": [
@@ -145,7 +148,8 @@
       ".jpg",
       ".jpeg",
       ".ico",
-      ".jar"
+      ".jar",
+      ".pptx"
     ],
     "repositories": {
       "orderflow-engine-api": {
@@ -185,7 +189,8 @@
         "mayReferenceSiblings": true
       },
       "orderflow-engine-docs": {},
-      "orderflow-engine-app": {}
+      "orderflow-engine-app": {},
+      "orderflow-engine-page": {}
     }
   }
 }
