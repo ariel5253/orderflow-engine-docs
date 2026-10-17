@@ -4,7 +4,7 @@ title: Orderflow Engine — Handoff
 status: accepted
 lang: en
 pair: none
-last-reviewed: 2026-10-15
+last-reviewed: 2026-10-17
 ---
 
 # Orderflow Engine — Handoff
@@ -28,7 +28,7 @@ It is a pricing engine and an idempotent order confirmation for a multi-country 
 | `orderflow-engine-tools` | Generators and checks: figures, progress chart, ADR in Word and PDF, documentation, integrity and consistency checks. Own Docker image |
 | `orderflow-engine-app` | Reserved. Not built |
 
-Each folder is a private GitHub repository of the account `ariel5253`, initialized on 2026-10-14. The **preparation phase (T-00) is closed**: each code repository received it in `dev` through thematic pull requests and then in `main` through `chore: close preparation phase (T-00)`. This repository has only `main` and received every change through a pull request ([branches-and-environments](../governance/branches-and-environments.md)). The pull requests of each phase are listed in §8, §9 and §10.
+Each folder is a private GitHub repository of the account `ariel5253`, initialized on 2026-10-14. The **preparation phase (T-00) is closed**: each code repository received it in `dev` through thematic pull requests and then in `main` through `chore: close preparation phase (T-00)`. This repository has only `main` and received every change through a pull request ([branches-and-environments](../governance/branches-and-environments.md)). The pull requests of each phase are listed in §8 … §11.
 
 Phases close on the owner's order, each with a merge commit on the `main` of the code repositories it changed:
 
@@ -37,24 +37,25 @@ Phases close on the owner's order, each with a merge commit on the `main` of the
 | 1. Preparation | T-00 | 2026-10-14 | `chore: close preparation phase (T-00)` in every code repository |
 | 2. Scaffold | T-01 | 2026-10-15 | `chore: close scaffold phase (T-01)` in `orderflow-engine-api` and `orderflow-engine-infra` (the other code repositories did not change) |
 | 3. Core | T-02 … T-16, T-18 | 2026-10-15 | `chore: close core phase (T-16)` in `orderflow-engine-api`, `orderflow-engine-infra` and `orderflow-engine-web` (`orderflow-engine-app` did not change) |
+| 4. Web | T-17, T-19, T-20 | 2026-10-17 | `chore: close web phase (T-17)` in `orderflow-engine-api`, `orderflow-engine-web`, `orderflow-engine-infra` and `orderflow-engine-tools` (`orderflow-engine-app` did not change) |
 
 ## 3. State (verified)
 
 | Item | Value | Verified by |
 |------|-------|-------------|
-| Current task | T-17 (the web client) and T-19 (the fixes found by walking the full stack) are merged into `dev` of `orderflow-engine-api`, `orderflow-engine-web`, `orderflow-engine-infra` and `orderflow-engine-tools`, and their specification into `main` of this repository (§11). They are not in `main` of the code repositories yet: that phase closes on the owner's order. Next: the delivery manuals | `gh pr list --state merged` on each repository on 2026-10-16 |
+| Current task | None open. T-00 … T-20 are in `main` of every code repository they changed: the web phase (T-17 the web client, T-19 the fixes found by walking the full stack, T-20 Guatemala and Peru) closed on 2026-10-17, and `main` of each code repository now has the same tree as the `dev` that `test-all` verified (§11). Next: delivery (OD-01) | `gh pr list --state merged` on each repository, and `git rev-parse origin/main^{tree} origin/dev^{tree}` in each code repository, on 2026-10-17 |
 | Specification | **Pre-release.** SPEC and TASKS are still being improved before the first version. Formal change control starts only after the first version is accepted | Measured review: 21 of 21 assignment bullets specified, the readable history now included; 10 ACs beyond the assignment, each justified in SPEC §14.3 (`cross_reference_check.py` on 2026-10-15) |
 | Front scope | On 2026-10-15 the product owner adopted the full web flow (cart → quote → confirmation → order → history, with a store picker) beyond the assignment's one-hour order-summary screen. T-17 was planned as thematic pull requests, estimated at about 13.5 h (11 to 16 h); its pull requests 1 … 8 are merged (§11), and the measured time is recorded in the API README. Scope verdict on 2026-10-15: E-07 adopted under T-17 with the shape of SPEC §8; `currency` in E-05 is a contract conformance fix, delivered in T-13 | SPEC §1 (Deviation), §10 and §14.3; TASKS T-17 |
-| Tasks done | T-00 (21 task and 5 phase-closing pull requests, §8), T-01 (9 task and 2 phase-closing pull requests, §9), T-02 … T-16 and T-18 (20 task and 3 phase-closing pull requests, §10), and T-17 and T-19 (14 task pull requests, §11; their phase is not closed yet) | `gh pr list --state merged` on each repository on 2026-10-16 |
+| Tasks done | T-00 (21 task and 5 phase-closing pull requests, §8), T-01 (9 task and 2 phase-closing pull requests, §9), T-02 … T-16 and T-18 (20 task and 3 phase-closing pull requests, §10), and T-17, T-19 and T-20 (19 task and 4 phase-closing pull requests, §11) | `gh pr list --state merged` on each repository on 2026-10-17 |
 | Branch protections | Rulesets are rejected by GitHub on private repositories of a free plan (HTTP 403). The rules are followed by hand and the rulesets are applied when the repositories become public | `gh api repos/ariel5253/<repository>/rulesets` on 2026-10-14 |
-| Documentation check | OK, including the rule that no relative link leaves its repository and the web README's required headings | `node orderflow-engine-tools/docs-check/check-docs.mjs` on 2026-10-16 |
-| Repository integrity | OK in all six repositories: ignore files, `.gitattributes`, Docker files, `.env.example`, no secrets | `node orderflow-engine-tools/integrity/check-integrity.mjs` on 2026-10-16 |
+| Documentation check | OK, including the rule that no relative link leaves its repository and the web README's required headings | `node orderflow-engine-tools/docs-check/check-docs.mjs` on 2026-10-17 |
+| Repository integrity | OK in all six repositories: ignore files, `.gitattributes`, Docker files, `.env.example`, no secrets | `node orderflow-engine-tools/integrity/check-integrity.mjs` on 2026-10-17 |
 | Tools image | Builds. Inside the container, `check-docs` and `check-integrity` pass, and the figures and progress chart are byte-identical to the host's | `docker build` and `docker run` of `orderflow-engine-tools` on 2026-10-14 |
 | Standalone repositories | Each folder copied alone has 0 broken links | Copy of each folder outside the workspace, links resolved, on 2026-10-14 |
 | ADR-0001 length | One A4 page at Arial 12 (2 cm margins), in English and in Spanish, as Word and PDF, with the accepted text | `python orderflow-engine-tools/render/build_deliverables.py` fails above one page; page count = 1 on 2026-10-15 |
 | Deliverable metadata | Author = license holder, title = document title. The Word files carry no generator or application name; the PDF files keep the converter's `Creator` and `Producer` fields | docx core properties and PDF info dictionary read on 2026-10-15 |
-| API tests | 333 unit and 308 integration tests green (Testcontainers PostgreSQL 17), the six golden tests among them. JaCoCo: 100% of lines and branches in `pricing.domain` (220 lines, 58 branches) and `pricing.domain.lever` (221 lines, 85 branches), gate ≥ 90%; 99.2% of lines and 98.0% of branches in the whole service. Each API pull request of §11 was verified on a clean export of its own commit, T-20 (Guatemala and Peru) included | `bash orderflow-engine-infra/scripts/test-all.sh` → `test-all: OK (API verify, web tests, end-to-end, documentation check, integrity check)` on `dev` of every repository, and `target/site/jacoco/jacoco.xml`, on 2026-10-16 |
-| Web tests | The literal-text check passes on 14 templates, then 209 specs in 15 files pass in headless Chromium inside the test stage of the web Dockerfile, the layout measured at 768 × 1024 and 375 × 812. End to end, against the full stack: cart → quote → confirm → order → My orders passes in Spanish and in English, the order read back first in My orders with its total | `docker build --no-cache-filter test --target test .` in `orderflow-engine-web` on `dev`, and the end-to-end step of `test-all`, on 2026-10-16 |
+| API tests | 333 unit and 308 integration tests green (Testcontainers PostgreSQL 17), the six golden tests among them. JaCoCo: 100% of lines and branches in `pricing.domain` (220 lines, 58 branches) and `pricing.domain.lever` (221 lines, 85 branches), gate ≥ 90%; 99.2% of lines and 98.0% of branches in the whole service. Each API pull request of §11 was verified on a clean export of its own commit, T-20 (Guatemala and Peru) included | `bash orderflow-engine-infra/scripts/test-all.sh` → `test-all: OK (API verify, web tests, end-to-end, documentation check, integrity check)` on fresh clones from GitHub of `dev` of every code repository and `main` of this one, on 2026-10-17, and `target/site/jacoco/jacoco.xml` on 2026-10-16 |
+| Web tests | The literal-text check passes on 14 templates, then 209 specs in 15 files pass in headless Chromium inside the test stage of the web Dockerfile, the layout measured at 768 × 1024 and 375 × 812. End to end, against the full stack: cart → quote → confirm → order → My orders passes in Spanish and in English, the order read back first in My orders with its total | `docker build --no-cache-filter test --target test .` in `orderflow-engine-web` on a fresh clone of `dev`, and the end-to-end step of `test-all`, on 2026-10-17 |
 | PIT mutation score | 185 of 185 mutations detected (100%), threshold 80%, on `pricing.domain` and `pricing.domain.lever`, with the T-19 quantity cap. Test strength 100%; line coverage of the mutated classes 432/442 (98%) | `./mvnw -Pmutation verify` on the T-19 quantity commit, on 2026-10-16 |
 | Time spent | Three working days, 2026-10-13 to 2026-10-15, including the specification, as the API README states. The web work, measured slice by slice and recorded in the API README under "Not included": the assignment's screen 68 min; its container, the full stack and the web step of `test-all` 55 min; the extension beyond the assignment 3 h 1 min. These are working times; review time is not included | API README, on 2026-10-16 |
 
@@ -184,12 +185,12 @@ API pull requests #9 … #23 were verified on a clean export of their own commit
 
 ## 11. Web phase pull requests
 
-Each API pull request was verified on a clean export of its own commit (`./mvnw verify`), each web pull request by `docker build --no-cache-filter test --target test` on a clean export, and each infra and tools pull request by its own checks; `test-all`, end to end included, then passed on `dev` of every repository.
+Each API pull request was verified on a clean export of its own commit (`./mvnw verify`), each web pull request by `docker build --no-cache-filter test --target test` on a clean export, and each infra and tools pull request by its own checks. Before the phase closed, `test-all`, end to end included, passed on fresh clones from GitHub of `dev` of every code repository and `main` of this one, on 2026-10-17; each phase-closing merge then gave `main` the same tree as that `dev`.
 
 | Repository | Task pull requests | Phase closing |
 |------------|--------------------|---------------|
-| `orderflow-engine-web` | #5 order summary screen · #6 cart and idempotent confirmation · #7 order history screen · #8 currency codes and remembered language · #9 Guatemala and Peru stores (T-20) | Not yet, on the owner's order |
-| `orderflow-engine-api` | #26 product list (E-07) · #27 web time and scope record · #28 catalog in the tenants' language · #29 line and gift quantity cap · #30 Guatemala and Peru tenants (T-20) | Not yet, on the owner's order |
-| `orderflow-engine-infra` | #9 web client in the full stack · #10 restart with Docker · #11 end-to-end flow in `test-all` | Not yet, on the owner's order |
-| `orderflow-engine-tools` | #9 figures relabeled for the web client and the product list | Not yet, on the owner's order |
-| `orderflow-engine-docs` | #14 web specification and T-19 · #15 handoff and the regenerated figures · #16 Guatemala and Peru specification (T-20) · #17 this handoff | Not applicable: `main` only |
+| `orderflow-engine-web` | #5 order summary screen · #6 cart and idempotent confirmation · #7 order history screen · #8 currency codes and remembered language · #9 Guatemala and Peru stores (T-20) | #10 |
+| `orderflow-engine-api` | #26 product list (E-07) · #27 web time and scope record · #28 catalog in the tenants' language · #29 line and gift quantity cap · #30 Guatemala and Peru tenants (T-20) | #31 |
+| `orderflow-engine-infra` | #9 web client in the full stack · #10 restart with Docker · #11 end-to-end flow in `test-all` | #12 |
+| `orderflow-engine-tools` | #9 figures relabeled for the web client and the product list | #10 |
+| `orderflow-engine-docs` | #14 web specification and T-19 · #15 handoff and the regenerated figures · #16 Guatemala and Peru specification (T-20) · #17 handoff with Guatemala and Peru · #18 this handoff | Not applicable: `main` only |
