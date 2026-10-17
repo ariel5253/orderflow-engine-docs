@@ -62,7 +62,7 @@ These are the risky edges. A reviewer should check each one in the task that own
 | D2 | T-04 … T-07 |
 | D3 | T-08 … T-10 |
 | D4 | T-11 … T-14 |
-| D5 | T-15, T-18, T-16, then T-17 slice by slice, then T-19 and T-20 |
+| D5 | T-15, T-18, T-16, then T-17 slice by slice, then T-19 and T-20, then the delivery set T-21 |
 
 **MVP cut line after T-16.** T-17 is the optional plus of the assignment, extended by the product owner to the full web flow (SPEC §14.3). It is estimated at about 13.5 h, more than D5 holds after T-16, and its slices are cut-safe (T-17, Delivery). Pull request 1 of T-17 (the specification) lands first, as GC-9 requires; every other T-17 pull request starts only after T-16 is merged, and T-17 never delays T-12…T-16. At the end of D4, progress is checked against this plan (HANDOFF OD-02). Any further cut, including the T-17 slices not merged at delivery, is agreed explicitly and recorded under "Not included" in the API README.
 
@@ -355,3 +355,24 @@ The assignment names four countries (Colombia, Ecuador, Guatemala, Peru); the se
 - **Web (`orderflow-engine-web`):** `public/config/stores.json` lists the four new stores, grouped by tenant; a spec checks that the picker shows the four tenants and that a GTQ and a PEN catalog format with their currency code. Commit: `feat(web): add Guatemala and Peru stores (T-20)`.
 - **Done when:** `./mvnw verify` and `docker build --target test .` pass, and the full stack quotes and confirms an order in GTQ and in PEN by clicks.
 - **Commit:** `feat(db): seed Guatemala and Peru tenants (T-20)`, the first of the two commits named above.
+
+### T-21: Delivery documents and public page
+The owner ordered the delivery set on 2026-10-17: five documents for readers outside the team, each in English and Spanish, their Word, PDF and PowerPoint versions, and a public page. They describe the delivered system and add no behavior: no code, contract or seed changes, and every number they cite is one HANDOFF §3 holds.
+- **Covers:** SPEC §15 (delivery set and `orderflow-engine-page`), GC-6, GC-9, DR-1, DR-2.
+- **Files (`orderflow-engine-docs`):**
+  - registration, first (GC-9): SPEC §15, the document map in `README(.es).md`, `governance/docs-governance.json` (the `delivery/` location and its language pairs; `orderflow-engine-page` as a scan root with the integrity rules of a content-only repository), this task, and the HANDOFF
+  - `delivery/{user-manual, technical-manual, architecture-report, solution-walkthrough, presentation}(.es).md`: each with the front matter of [documentation-rules](../governance/documentation-rules.md) §4 and, under the H1, the one question it answers; both files of a pair have the same number of headings
+  - `delivery/screenshots/{en,es}/`: `01-store-picker`, `02-catalog`, `03-cart`, `04-quote-summary`, `05-quote-levers`, `06-order-confirmed`, `07-my-orders`, `08-error-message` and `09-mobile-summary`, as PNG, captured from the full stack
+  - `delivery/figures/`: one PNG per SVG in `diagrams/` (`01-runtime-topology` … `09-outbox-lifecycle`), with the same stem
+  - `deliverables/delivery/`: the user manual, technical manual, architecture report and solution walkthrough as `.docx` and `.pdf` with the print template (documentation-rules §3a), and `presentation.pptx` and `presentation.es.pptx`
+- **Files (`orderflow-engine-page`):** a new folder, a static site for GitHub Pages, Spanish by default with an English switch: `README(.es).md`, `LICENSE`, and the `.gitignore` and `.gitattributes` that [repository-integrity](../governance/repository-integrity.md) requires. No Docker files and no `.env`.
+- **Steps:**
+  - register the delivery set before writing it (GC-9)
+  - capture the screenshots in Spanish and in English, and export each SVG figure to PNG
+  - write each document in English and in Spanish, stating only what the repositories show
+  - render the four documents to Word and PDF and the presentation to PowerPoint, in both languages
+  - build the public page
+  - run both checks and record the state in the HANDOFF (GC-8)
+- **Verify:** `node orderflow-engine-tools/docs-check/check-docs.mjs` → OK, and `node orderflow-engine-tools/integrity/check-integrity.mjs` → OK with `orderflow-engine-page` among the repositories.
+- **Done when:** every delivery document is indexed and paired with the same number of headings; every image a document cites exists; the Word, PDF and PowerPoint files exist in both languages; the page opens in Spanish and switches to English; both checks pass.
+- **Commit:** `docs: add delivery documents and public page (T-21)` in this repository, one pull request with the registration and the documents; `feat(tools): render delivery documents and decks (T-21)` in `orderflow-engine-tools`; and `feat(page): add delivery portal (T-21)` in `orderflow-engine-page`, after its bootstrap commit.

@@ -18,6 +18,302 @@
         "adr/0001-order-pricing-and-confirmation.es.pdf"
       ],
       "pages": 1
+    },
+    {
+      "source": "orderflow-engine-docs/delivery/user-manual.md",
+      "sha256": "84f32d528de3d0b4f83d7222ff32c1ca54e1519c457ebbde03c51d310dfbe4d1",
+      "outputs": [
+        "delivery/user-manual.docx",
+        "delivery/user-manual.pdf"
+      ],
+      "pages": 18,
+      "images": [
+        {
+          "path": "orderflow-engine-docs/delivery/screenshots/en/01-store-picker.png",
+          "sha256": "88575145a829e5999005bed8c8b432b8f012819324ae842ad0589f21f47bb6fc"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/screenshots/en/02-catalog.png",
+          "sha256": "0d7624f4d1a6a97d009355b8714d0ff4162f0f397185f795d54303852c11601d"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/screenshots/en/03-cart.png",
+          "sha256": "e27972d695455e430fe9943dbd2644d9a73c25d280b40c258c174f23f6b21c80"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/screenshots/en/04-quote-summary.png",
+          "sha256": "325d43690c4d863f6130074d54d723278c020152d31d93b01b17b5e013e0e207"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/screenshots/en/09-mobile-summary.png",
+          "sha256": "ad72d8730591c274144b7715a94fd44cb94301dfe0df8ef6ca83616594933ad6"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/screenshots/en/05-quote-levers.png",
+          "sha256": "77be4495bdc593df1824ea52993d154642f63237265f59c911996e9765ea3445"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/screenshots/en/06-order-confirmed.png",
+          "sha256": "95769a088a77f977dfd48fd219700d994a08d523b035d77f32969f02f2d61a92"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/screenshots/en/07-my-orders.png",
+          "sha256": "b330992644372109b5cc47979bebfec55d07140a366274cdb86d367b073417c1"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/screenshots/en/08-error-message.png",
+          "sha256": "b63aee618dd6fb905feefaec4e2c3557675cd9353795876df15ad6145a369e93"
+        }
+      ]
+    },
+    {
+      "source": "orderflow-engine-docs/delivery/user-manual.es.md",
+      "sha256": "0bf5998d980a6d9db2515f7d63229dbfca4512dfb3652f939cb93f4bfd99407d",
+      "outputs": [
+        "delivery/user-manual.es.docx",
+        "delivery/user-manual.es.pdf"
+      ],
+      "pages": 19,
+      "images": [
+        {
+          "path": "orderflow-engine-docs/delivery/screenshots/es/01-store-picker.png",
+          "sha256": "22c69fb73db20d84c7f28ae2fc2d196e0f83c0e8b056effe43f8d6a0be82b6ba"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/screenshots/es/02-catalog.png",
+          "sha256": "7c31948f52ece110951c804bb5150dd21e73e7089291dbb7685d37893d5b06f2"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/screenshots/es/03-cart.png",
+          "sha256": "e4b7eebeb3eb52e8653e75baaa2a06b2c7ff6a965d4fe431e0e6fae3cdc8ea62"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/screenshots/es/04-quote-summary.png",
+          "sha256": "8b8173ceb9385145561357061a68e88ea07610442332b2fbd0533bae681c1642"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/screenshots/es/09-mobile-summary.png",
+          "sha256": "7176811efb3e0890b20f1bbddf8d75a08d4da076cf2507ff6afb5c78c88aa09d"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/screenshots/es/05-quote-levers.png",
+          "sha256": "bcb2e9ffaecfb5e3a1b19251525e88832f78df8c9f8fa30b656665ac74c7e1cb"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/screenshots/es/06-order-confirmed.png",
+          "sha256": "6b371f82757c53ddd22eaecbd8c7399e146a3a6455d74f70488212b43c5737ef"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/screenshots/es/07-my-orders.png",
+          "sha256": "863a33ef55e2d54a86662e066079f0750f0d7e7f136c3a5a7da5f04ac1c3f704"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/screenshots/es/08-error-message.png",
+          "sha256": "b63aa93d86c5f45ed539c0331455881c939c5fea965bf81dd52fe8101fed9fb7"
+        }
+      ]
+    },
+    {
+      "source": "orderflow-engine-docs/delivery/technical-manual.md",
+      "sha256": "9efc07f6fcb401bb26039ec8350f360e4b1c53509a70c632eea747a81008b89b",
+      "outputs": [
+        "delivery/technical-manual.docx",
+        "delivery/technical-manual.pdf"
+      ],
+      "pages": 34,
+      "images": [
+        {
+          "path": "orderflow-engine-docs/delivery/figures/01-runtime-topology.png",
+          "sha256": "88dae9c7a29bbab3ec42eed1ab0992ba8e7247d1af3a8ab04f5031b2a257372c"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/02-workspace-repositories.png",
+          "sha256": "f58c7ab9a13cb7de43690619352f1b15c03b5403dc83019e6e1ee422efabcbe6"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/09-outbox-lifecycle.png",
+          "sha256": "6d7ea547e4b6c35caed91be06521300d17764ad73f813d3e5ee229b94017eefa"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/03-ports-and-adapters.png",
+          "sha256": "665e2fae2108d8103f96c466cb8c6508155247c68287941705961aebdfab93a3"
+        }
+      ]
+    },
+    {
+      "source": "orderflow-engine-docs/delivery/technical-manual.es.md",
+      "sha256": "67de53bc169351fecd5a8bc5ea61df52d7f67deb5357dbbbb23ab8453a8e4040",
+      "outputs": [
+        "delivery/technical-manual.es.docx",
+        "delivery/technical-manual.es.pdf"
+      ],
+      "pages": 37,
+      "images": [
+        {
+          "path": "orderflow-engine-docs/delivery/figures/01-runtime-topology.png",
+          "sha256": "88dae9c7a29bbab3ec42eed1ab0992ba8e7247d1af3a8ab04f5031b2a257372c"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/02-workspace-repositories.png",
+          "sha256": "f58c7ab9a13cb7de43690619352f1b15c03b5403dc83019e6e1ee422efabcbe6"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/09-outbox-lifecycle.png",
+          "sha256": "6d7ea547e4b6c35caed91be06521300d17764ad73f813d3e5ee229b94017eefa"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/03-ports-and-adapters.png",
+          "sha256": "665e2fae2108d8103f96c466cb8c6508155247c68287941705961aebdfab93a3"
+        }
+      ]
+    },
+    {
+      "source": "orderflow-engine-docs/delivery/architecture-report.md",
+      "sha256": "52ad4177b0af47319d7fc3b7b920b098a0c6b13b7a14970a710440573d80e0dc",
+      "outputs": [
+        "delivery/architecture-report.docx",
+        "delivery/architecture-report.pdf"
+      ],
+      "pages": 33,
+      "images": [
+        {
+          "path": "orderflow-engine-docs/delivery/figures/01-runtime-topology.png",
+          "sha256": "88dae9c7a29bbab3ec42eed1ab0992ba8e7247d1af3a8ab04f5031b2a257372c"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/02-workspace-repositories.png",
+          "sha256": "f58c7ab9a13cb7de43690619352f1b15c03b5403dc83019e6e1ee422efabcbe6"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/03-ports-and-adapters.png",
+          "sha256": "665e2fae2108d8103f96c466cb8c6508155247c68287941705961aebdfab93a3"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/04-dependency-rule.png",
+          "sha256": "83030a570803dc050c47c97bd8c270a3d7e5eb141ffafa026ccbe632a508262e"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/05-pricing-pipeline.png",
+          "sha256": "fc8002306cde8e2ccf0e04de8331a4cfdd35919653f943ce20f4cdd233028a15"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/06-quote-sequence.png",
+          "sha256": "b43fc7500c2e715e99ae4487909e89fc9f314ddc05c09cc28f25103921afe508"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/07-confirm-transaction.png",
+          "sha256": "89e058dccee97f3ad890c5a3d1a668da8c931526e8df962d433fe8baf0463c14"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/08-data-model.png",
+          "sha256": "c08d60829c25c7e209543d7ac5653eb2652f3457a7bdf217c0bb5a4c81779e1c"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/09-outbox-lifecycle.png",
+          "sha256": "6d7ea547e4b6c35caed91be06521300d17764ad73f813d3e5ee229b94017eefa"
+        }
+      ]
+    },
+    {
+      "source": "orderflow-engine-docs/delivery/architecture-report.es.md",
+      "sha256": "2a53205ad6a11b88f08bd4929a6076baf2ce5a44d6fe3ff4b64d807fc334d698",
+      "outputs": [
+        "delivery/architecture-report.es.docx",
+        "delivery/architecture-report.es.pdf"
+      ],
+      "pages": 34,
+      "images": [
+        {
+          "path": "orderflow-engine-docs/delivery/figures/01-runtime-topology.png",
+          "sha256": "88dae9c7a29bbab3ec42eed1ab0992ba8e7247d1af3a8ab04f5031b2a257372c"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/02-workspace-repositories.png",
+          "sha256": "f58c7ab9a13cb7de43690619352f1b15c03b5403dc83019e6e1ee422efabcbe6"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/03-ports-and-adapters.png",
+          "sha256": "665e2fae2108d8103f96c466cb8c6508155247c68287941705961aebdfab93a3"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/04-dependency-rule.png",
+          "sha256": "83030a570803dc050c47c97bd8c270a3d7e5eb141ffafa026ccbe632a508262e"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/05-pricing-pipeline.png",
+          "sha256": "fc8002306cde8e2ccf0e04de8331a4cfdd35919653f943ce20f4cdd233028a15"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/06-quote-sequence.png",
+          "sha256": "b43fc7500c2e715e99ae4487909e89fc9f314ddc05c09cc28f25103921afe508"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/07-confirm-transaction.png",
+          "sha256": "89e058dccee97f3ad890c5a3d1a668da8c931526e8df962d433fe8baf0463c14"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/08-data-model.png",
+          "sha256": "c08d60829c25c7e209543d7ac5653eb2652f3457a7bdf217c0bb5a4c81779e1c"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/09-outbox-lifecycle.png",
+          "sha256": "6d7ea547e4b6c35caed91be06521300d17764ad73f813d3e5ee229b94017eefa"
+        }
+      ]
+    },
+    {
+      "source": "orderflow-engine-docs/delivery/solution-walkthrough.md",
+      "sha256": "5592ef900a1b2da9ca609bb7ba2b2ea6f5a7d412618b1ab279b99238003fb2ec",
+      "outputs": [
+        "delivery/solution-walkthrough.docx",
+        "delivery/solution-walkthrough.pdf"
+      ],
+      "pages": 24,
+      "images": [
+        {
+          "path": "orderflow-engine-docs/delivery/figures/05-pricing-pipeline.png",
+          "sha256": "fc8002306cde8e2ccf0e04de8331a4cfdd35919653f943ce20f4cdd233028a15"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/07-confirm-transaction.png",
+          "sha256": "89e058dccee97f3ad890c5a3d1a668da8c931526e8df962d433fe8baf0463c14"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/09-outbox-lifecycle.png",
+          "sha256": "6d7ea547e4b6c35caed91be06521300d17764ad73f813d3e5ee229b94017eefa"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/01-runtime-topology.png",
+          "sha256": "88dae9c7a29bbab3ec42eed1ab0992ba8e7247d1af3a8ab04f5031b2a257372c"
+        }
+      ]
+    },
+    {
+      "source": "orderflow-engine-docs/delivery/solution-walkthrough.es.md",
+      "sha256": "3f2f0346383f2c02ff84ad7a4f037d0910f06813f2efa9a437e16125af82579d",
+      "outputs": [
+        "delivery/solution-walkthrough.es.docx",
+        "delivery/solution-walkthrough.es.pdf"
+      ],
+      "pages": 26,
+      "images": [
+        {
+          "path": "orderflow-engine-docs/delivery/figures/05-pricing-pipeline.png",
+          "sha256": "fc8002306cde8e2ccf0e04de8331a4cfdd35919653f943ce20f4cdd233028a15"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/07-confirm-transaction.png",
+          "sha256": "89e058dccee97f3ad890c5a3d1a668da8c931526e8df962d433fe8baf0463c14"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/09-outbox-lifecycle.png",
+          "sha256": "6d7ea547e4b6c35caed91be06521300d17764ad73f813d3e5ee229b94017eefa"
+        },
+        {
+          "path": "orderflow-engine-docs/delivery/figures/01-runtime-topology.png",
+          "sha256": "88dae9c7a29bbab3ec42eed1ab0992ba8e7247d1af3a8ab04f5031b2a257372c"
+        }
+      ]
     }
   ]
 }

@@ -657,16 +657,17 @@ Everything the assignment does not ask for is listed here, with what it buys. No
 
 ## 15. Deliverables and repositories
 
-The workspace contains sibling folders, and each one is a future repository with its own `README` (en + es) and `LICENSE` (MIT). **`orderflow-engine-api` is the deliverable repository the assignment describes.** On its own it contains the code, the tests, the single command, the README with the four required topics, and the ADR. `orderflow-engine-docs` is delivered alongside, with the full specification.
+The workspace contains sibling folders, and each one is a future repository with its own `README` (en + es) and `LICENSE` (MIT). **`orderflow-engine-api` is the deliverable repository the assignment describes.** On its own it contains the code, the tests, the single command, the README with the four required topics, and the ADR. `orderflow-engine-docs` is delivered alongside, with the full specification and the delivery set (T-21). `orderflow-engine-page` presents the delivery as a public page.
 
 | Folder | Purpose |
 |--------|---------|
 | `orderflow-engine-api` | **The deliverable.** Spring Boot service, tests, golden fixtures, Liquibase, README, ADR-0001, and its own `Dockerfile` and `compose.yaml` (service and PostgreSQL) |
 | `orderflow-engine-web` | The optional Angular front: the full ordering flow around the order-summary screen (§10), with its own `Dockerfile` (nginx) and `compose.yaml`. Alone it serves the screens; the flow needs the API, which the `orderflow-engine-infra` compose starts beside it |
 | `orderflow-engine-infra` | Docker Compose for the full stack, built from the sibling repositories, and `scripts/test-all` |
-| `orderflow-engine-docs` | Specification, plan, contract, data model, architecture, governance, and the generated figures, progress chart and ADR in Word and PDF |
+| `orderflow-engine-docs` | Specification, plan, contract, data model, architecture, governance, and the generated figures, progress chart and ADR in Word and PDF. From T-21, the delivery set in `delivery/` (with its screenshots and PNG figures) and its Word, PDF and PowerPoint outputs in `deliverables/delivery/` |
 | `orderflow-engine-tools` | Generators and checks: figures, progress chart, ADR in Word and PDF, documentation, integrity and consistency checks. Its own `Dockerfile` (Python and Node) |
 | `orderflow-engine-app` | Reserved for a future mobile app. Not built in this delivery |
+| `orderflow-engine-page` | The public page of the delivery (T-21): a static site for GitHub Pages, Spanish by default with an English switch. No Docker files and no `.env`. A local folder until it is published as a repository |
 
 Each executable repository builds and runs with its own Docker files and its own `.env.example`. A `.env` is never versioned. Rules and their check: [repository-integrity.md](../governance/repository-integrity.md).
 
@@ -679,3 +680,11 @@ Delivery documents exist in **English and Spanish**. Internal technical document
 | Web README: how to run (alone and with the API), screens and routes, prevention at component level, where the time spent beyond the one-hour cap is recorded | `orderflow-engine-web/README(.es).md` | en, es |
 | Specification set: constitution, SPEC, plan, TASKS, API contract, data model, architecture | `orderflow-engine-docs/spec/` | en |
 | Handoff: verified state, commands, PIT score, time spent | `orderflow-engine-docs/handoff/HANDOFF.md` | en |
+| User manual: how the shopkeeper uses the web client, from the store picker to My orders | `orderflow-engine-docs/delivery/user-manual(.es).md` | en, es |
+| Technical manual: install, run, configure, operate, test, maintain (including how to add a store, product or lever with a Liquibase changeset) and troubleshoot | `orderflow-engine-docs/delivery/technical-manual(.es).md` | en, es |
+| Architecture report, in APA 7 style: the inventory of every artifact and what each one does and why | `orderflow-engine-docs/delivery/architecture-report(.es).md` | en, es |
+| Solution walkthrough: how the assignment was solved, step by step | `orderflow-engine-docs/delivery/solution-walkthrough(.es).md` | en, es |
+| Presentation source: the slide text of the deck, what the system has and how it works, step by step | `orderflow-engine-docs/delivery/presentation(.es).md` | en, es |
+| Screenshots of the web client (`01-store-picker` … `09-mobile-summary`) and one PNG per SVG figure, which the delivery documents cite | `orderflow-engine-docs/delivery/screenshots/{en,es}/`, `orderflow-engine-docs/delivery/figures/` | en, es |
+| Rendered delivery set: the user manual, technical manual, architecture report and solution walkthrough in Word and PDF (print template of [documentation-rules](../governance/documentation-rules.md) §3a), and the presentation deck in PowerPoint | `orderflow-engine-docs/deliverables/delivery/` (`<name>(.es).docx`, `<name>(.es).pdf`, `presentation(.es).pptx`) | en, es |
+| Public page | `orderflow-engine-page/` | es (default), en |

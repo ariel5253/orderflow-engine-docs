@@ -21,14 +21,15 @@ It is a pricing engine and an idempotent order confirmation for a multi-country 
 
 | Folder | State |
 |--------|-------|
-| `orderflow-engine-docs` | Specification, plan, contract, data model, architecture, 9 diagrams, governance, ADR in Word and PDF, this handoff |
+| `orderflow-engine-docs` | Specification, plan, contract, data model, architecture, 9 diagrams, governance, ADR in Word and PDF, this handoff, and the delivery set (T-21): five document pairs, screenshots and figure images in `delivery/`, and their Word, PDF and PowerPoint versions in `deliverables/delivery/` |
 | `orderflow-engine-api` | **The deliverable.** Pricing engine, sealed quotes, idempotent order confirmation, order history, outbox relay and retention housekeeping (T-02 … T-16, T-18), the read-only product list E-07 (T-17), and the quantity cap and catalog names in the tenants' language (T-19). README with the four required topics, an operations section and the measured time, and ADR-0001 (accepted) |
 | `orderflow-engine-web` | The Angular client (T-17, T-19): the order summary the assignment offers as a plus and, at the product owner's request, the full flow around it (cart → quote → confirmation → order → My orders, with a store picker), in Spanish and English. Its nginx forwards `/api/` to the API, so the browser sees one origin. Its specs run in headless Chromium in the test stage of its Dockerfile |
 | `orderflow-engine-infra` | Full-stack compose (database, API and web client, restarted with Docker) and `test-all`: API verify, web tests, an end-to-end flow against the full stack, documentation check and integrity check (T-01, T-17, T-19) |
-| `orderflow-engine-tools` | Generators and checks: figures, progress chart, ADR in Word and PDF, documentation, integrity and consistency checks. Own Docker image |
+| `orderflow-engine-tools` | Generators and checks: figures, progress chart, ADR and delivery documents in Word and PDF, presentation decks, screenshots, documentation, integrity and consistency checks. Own Docker image |
 | `orderflow-engine-app` | Reserved. Not built |
+| `orderflow-engine-page` | The public page of the delivery (T-21): a static site for GitHub Pages, Spanish by default with an English switch, with no Docker files and no `.env`. A local folder, not yet a GitHub repository. `check-docs` and `check-integrity` scan it |
 
-Each folder is a private GitHub repository of the account `ariel5253`, initialized on 2026-10-14. The **preparation phase (T-00) is closed**: each code repository received it in `dev` through thematic pull requests and then in `main` through `chore: close preparation phase (T-00)`. This repository has only `main` and received every change through a pull request ([branches-and-environments](../governance/branches-and-environments.md)). The pull requests of each phase are listed in §8 … §11.
+Each folder except `orderflow-engine-page` is a private GitHub repository of the account `ariel5253`, initialized on 2026-10-14. The **preparation phase (T-00) is closed**: each code repository received it in `dev` through thematic pull requests and then in `main` through `chore: close preparation phase (T-00)`. This repository has only `main` and received every change through a pull request ([branches-and-environments](../governance/branches-and-environments.md)). The pull requests of each phase are listed in §8 … §11.
 
 Phases close on the owner's order, each with a merge commit on the `main` of the code repositories it changed:
 
@@ -43,16 +44,17 @@ Phases close on the owner's order, each with a merge commit on the `main` of the
 
 | Item | Value | Verified by |
 |------|-------|-------------|
-| Current task | None open. T-00 … T-20 are in `main` of every code repository they changed: the web phase (T-17 the web client, T-19 the fixes found by walking the full stack, T-20 Guatemala and Peru) closed on 2026-10-17, and `main` of each code repository now has the same tree as the `dev` that `test-all` verified (§11). Next: delivery (OD-01) | `gh pr list --state merged` on each repository, and `git rev-parse origin/main^{tree} origin/dev^{tree}` in each code repository, on 2026-10-17 |
+| Current task | T-21, delivery documents and public page, done on 2026-10-17: the user manual, technical manual, architecture report, solution walkthrough and presentation in English and Spanish, the 18 screenshots and 9 figure images they cite, their Word, PDF and PowerPoint versions, and the public page filled with them, which opens in Spanish and switches to English. T-00 … T-20 are in `main` of every code repository they changed: the web phase (T-17 the web client, T-19 the fixes found by walking the full stack, T-20 Guatemala and Peru) closed on 2026-10-17, and `main` of each code repository now has the same tree as the `dev` that `test-all` verified (§11). Next: delivery (OD-01) | TASKS T-21 and the task progress table (§4); the two build commands of §5, the two checks and the page in headless Chromium at 375 and 1440 px wide, on 2026-10-17; `gh pr list --state merged` on each repository, and `git rev-parse origin/main^{tree} origin/dev^{tree}` in each code repository, on 2026-10-17 |
 | Specification | **Pre-release.** SPEC and TASKS are still being improved before the first version. Formal change control starts only after the first version is accepted | Measured review: 21 of 21 assignment bullets specified, the readable history now included; 10 ACs beyond the assignment, each justified in SPEC §14.3 (`cross_reference_check.py` on 2026-10-15) |
 | Front scope | On 2026-10-15 the product owner adopted the full web flow (cart → quote → confirmation → order → history, with a store picker) beyond the assignment's one-hour order-summary screen. T-17 was planned as thematic pull requests, estimated at about 13.5 h (11 to 16 h); its pull requests 1 … 8 are merged (§11), and the measured time is recorded in the API README. Scope verdict on 2026-10-15: E-07 adopted under T-17 with the shape of SPEC §8; `currency` in E-05 is a contract conformance fix, delivered in T-13 | SPEC §1 (Deviation), §10 and §14.3; TASKS T-17 |
 | Tasks done | T-00 (21 task and 5 phase-closing pull requests, §8), T-01 (9 task and 2 phase-closing pull requests, §9), T-02 … T-16 and T-18 (20 task and 3 phase-closing pull requests, §10), and T-17, T-19 and T-20 (19 task and 4 phase-closing pull requests, §11) | `gh pr list --state merged` on each repository on 2026-10-17 |
 | Branch protections | Rulesets are rejected by GitHub on private repositories of a free plan (HTTP 403). The rules are followed by hand and the rulesets are applied when the repositories become public | `gh api repos/ariel5253/<repository>/rulesets` on 2026-10-14 |
-| Documentation check | OK, including the rule that no relative link leaves its repository and the web README's required headings | `node orderflow-engine-tools/docs-check/check-docs.mjs` on 2026-10-17 |
-| Repository integrity | OK in all six repositories: ignore files, `.gitattributes`, Docker files, `.env.example`, no secrets | `node orderflow-engine-tools/integrity/check-integrity.mjs` on 2026-10-17 |
+| Documentation check | OK (42 Markdown files, 3 i18n bundle groups), including the rule that no relative link leaves its repository, the web README's required headings and the delivery pairs | `node orderflow-engine-tools/docs-check/check-docs.mjs` on 2026-10-17 |
+| Repository integrity | OK in all seven folders, the six repositories and `orderflow-engine-page`: ignore files, `.gitattributes`, Docker files, `.env.example`, no secrets | `node orderflow-engine-tools/integrity/check-integrity.mjs` on 2026-10-17 |
 | Tools image | Builds. Inside the container, `check-docs` and `check-integrity` pass, and the figures and progress chart are byte-identical to the host's | `docker build` and `docker run` of `orderflow-engine-tools` on 2026-10-14 |
 | Standalone repositories | Each folder copied alone has 0 broken links | Copy of each folder outside the workspace, links resolved, on 2026-10-14 |
-| ADR-0001 length | One A4 page at Arial 12 (2 cm margins), in English and in Spanish, as Word and PDF, with the accepted text | `python orderflow-engine-tools/render/build_deliverables.py` fails above one page; page count = 1 on 2026-10-15 |
+| ADR-0001 length | One A4 page at Arial 12 (2 cm margins), in English and in Spanish, as Word and PDF, with the accepted text | `python orderflow-engine-tools/render/build_deliverables.py` fails above one page; page count = 1 on 2026-10-15, and again on 2026-10-17 |
+| Delivery outputs | Word and PDF, English / Spanish pages: user manual 18 / 19, technical manual 34 / 37, architecture report 33 / 34, solution walkthrough 24 / 26. Presentation: 23 slides in each language | `python orderflow-engine-tools/render/build_deliverables.py` and `python orderflow-engine-tools/render/build_presentation.py` on 2026-10-17 |
 | Deliverable metadata | Author = license holder, title = document title. The Word files carry no generator or application name; the PDF files keep the converter's `Creator` and `Producer` fields | docx core properties and PDF info dictionary read on 2026-10-15 |
 | API tests | 333 unit and 308 integration tests green (Testcontainers PostgreSQL 17), the six golden tests among them. JaCoCo: 100% of lines and branches in `pricing.domain` (220 lines, 58 branches) and `pricing.domain.lever` (221 lines, 85 branches), gate ≥ 90%; 99.2% of lines and 98.0% of branches in the whole service. Each API pull request of §11 was verified on a clean export of its own commit, T-20 (Guatemala and Peru) included | `bash orderflow-engine-infra/scripts/test-all.sh` → `test-all: OK (API verify, web tests, end-to-end, documentation check, integrity check)` on fresh clones from GitHub of `dev` of every code repository and `main` of this one, on 2026-10-17, and `target/site/jacoco/jacoco.xml` on 2026-10-16 |
 | Web tests | The literal-text check passes on 14 templates, then 209 specs in 15 files pass in headless Chromium inside the test stage of the web Dockerfile, the layout measured at 768 × 1024 and 375 × 812. End to end, against the full stack: cart → quote → confirm → order → My orders passes in Spanish and in English, the order read back first in My orders with its total | `docker build --no-cache-filter test --target test .` in `orderflow-engine-web` on a fresh clone of `dev`, and the end-to-end step of `test-all`, on 2026-10-17 |
@@ -90,6 +92,7 @@ Project start: 2026-10-13. Cut line after: T-16. Update this table at the end of
 | T-17 | Web client: summary and full flow (optional) | D5 | done | 2026-10-16 |
 | T-19 | Fixes after the T-17 preview | D5 | done | 2026-10-16 |
 | T-20 | Seed Guatemala and Peru | D5 | done | 2026-10-17 |
+| T-21 | Delivery documents and public page | D5 | done | 2026-10-17 |
 
 ## 5. Commands to resume
 
@@ -101,7 +104,8 @@ for r in api web infra docs tools app; do gh repo clone ariel5253/orderflow-engi
 node orderflow-engine-tools/docs-check/check-docs.mjs      # documentation governance
 node orderflow-engine-tools/integrity/check-integrity.mjs  # ignore files, line endings, secrets
 python orderflow-engine-tools/diagrams/generate_diagrams.py # regenerate and check the figures
-python orderflow-engine-tools/render/build_deliverables.py  # ADR in Word and PDF (needs LibreOffice)
+python orderflow-engine-tools/render/build_deliverables.py  # ADR and delivery documents in Word and PDF (needs LibreOffice)
+python orderflow-engine-tools/render/build_presentation.py  # presentation decks in PowerPoint
 # From T-01 on:
 orderflow-engine-infra/scripts/test-all.sh                 # API verify + web tests + docs and integrity checks
 (cd orderflow-engine-api && ./mvnw verify)                 # API only
@@ -116,7 +120,7 @@ Toolchain found on the build machine:
 - Java 21
 - Node 24 (24.20 since 2026-10-15): the documentation and integrity checks; the web specs only when they run on the host instead of in their container
 - Docker Desktop (required by Testcontainers and by every `compose.yaml`)
-- Python 3.11 with `python-docx` and `pypdf` (tools; see its `requirements.txt`)
+- Python 3.11 with `python-docx`, `pypdf` and `python-pptx` (tools; see its `requirements.txt`)
 - LibreOffice (tools: PDF conversion)
 
 Maven is not installed globally, so the Maven Wrapper is used. From T-17 on, the web specs run in a container (the `test` stage of the web `Dockerfile`), so they need only Docker. Running them on the host instead needs a Node version the pinned Angular accepts (22.22.3 or later in the 22 line, or 24.15 or later) and Chromium: `npx playwright install chromium`, once, in `orderflow-engine-web`.
