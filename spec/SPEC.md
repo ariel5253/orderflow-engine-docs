@@ -217,8 +217,10 @@ OPEN ──confirm──▶ CONFIRMED   (an order exists for the quote)
 - Seeded tenants:
   - `co-alpha`: Colombia, COP, scale 0
   - `ec-alpha`: Ecuador, USD, scale 2
+  - `gt-alpha`: Guatemala, GTQ, scale 2
+  - `pe-alpha`: Peru, PEN, scale 2
 
-  Two countries with different scales are enough to prove that nothing is hard-coded. The `brand` column supports more brands per country without code changes.
+  These are the four countries the assignment names. Guatemala and Peru were added as data only (T-20): a changeset, with no change to the engine or the API code, which is itself the proof that nothing is hard-coded. The `brand` column supports more brands per country without code changes.
 
 ## 6. Quote equals confirmation
 
@@ -381,7 +383,7 @@ The list is closed. Any other screen (search, categories, promotions, account, c
 | Store picker | Lists the seeded stores (tenant id, customer id, display name) from `public/config/stores.json`. It stands in for authentication (A-06). It is a disclosure, not a native `<select>`, because a closed select cuts long names | `screen-rules.spec.ts` |
 | Navigation | "Shop" (`/cart`), "My orders" (`/orders`) and the ES/EN switch (§9) | *(review)* |
 | Cart state | In the browser only, one cart per store, emptied after a 201. The server keeps no cart (§1) | `confirm-idempotency.spec.ts` |
-| Data text | Product descriptions and store names are tenant data, written in the tenant's language (Spanish for both seeded tenants), shown as received and never translated by the client. The ES/EN switch translates the interface, not the catalog. A catalog in several languages is an adoption path ([plan](plan.md) §3) | *(review)* |
+| Data text | Product descriptions and store names are tenant data, written in the tenant's language (Spanish for the four seeded tenants), shown as received and never translated by the client. The ES/EN switch translates the interface, not the catalog. A catalog in several languages is an adoption path ([plan](plan.md) §3) | *(review)* |
 
 ### 10.2 Components: prevention at component level
 
@@ -403,7 +405,7 @@ Prevention lives in components, not in screens. A screen that prints text, holds
 |------|-------------|
 | The front never computes money. Every amount on screen is a string from an API body, the catalog included, formatted as is by one `money` pipe (§9). No arithmetic operator touches an amount | `money.pipe.spec.ts`; the absence of arithmetic *(review)* |
 | The cart shows list prices and unit counts, never a subtotal or a total. The total appears only with the quote | `cart.spec.ts` |
-| Every screen that shows amounts names their currency by its ISO code, because COP and USD share the `$` symbol: the cart says "Prices in {currency}" above the grid, and each total of the action bar and of My orders is followed by the code ("$87,534 COP", "$77.11 USD") | `cart.spec.ts`, `screen-rules.spec.ts` |
+| Every screen that shows amounts names their currency by its ISO code, because COP and USD share the `$` symbol: the cart says "Prices in {currency}" above the grid, and each total of the action bar and of My orders is followed by the code ("$87,534 COP", "$77.11 USD"), unless the formatted amount already shows it, as `Intl` does for PEN ("PEN 25.37"), so a code never appears twice | `cart.spec.ts`, `screen-rules.spec.ts` |
 | Catalog source: `GET /api/v1/products` (E-07), read on every visit to the cart, so the cart lists exactly what the API prices | `ProductContractIT` |
 | History currency: the E-05 body's `currency`, as in every other body (§8) | `OrderHistoryContractIT`, `history-read-your-writes.spec.ts` |
 

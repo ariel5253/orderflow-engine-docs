@@ -62,7 +62,7 @@ These are the risky edges. A reviewer should check each one in the task that own
 | D2 | T-04 … T-07 |
 | D3 | T-08 … T-10 |
 | D4 | T-11 … T-14 |
-| D5 | T-15, T-18, T-16, then T-17 slice by slice, then T-19 |
+| D5 | T-15, T-18, T-16, then T-17 slice by slice, then T-19 and T-20 |
 
 **MVP cut line after T-16.** T-17 is the optional plus of the assignment, extended by the product owner to the full web flow (SPEC §14.3). It is estimated at about 13.5 h, more than D5 holds after T-16, and its slices are cut-safe (T-17, Delivery). Pull request 1 of T-17 (the specification) lands first, as GC-9 requires; every other T-17 pull request starts only after T-16 is merged, and T-17 never delays T-12…T-16. At the end of D4, progress is checked against this plan (HANDOFF OD-02). Any further cut, including the T-17 slices not merged at delivery, is agreed explicitly and recorded under "Not included" in the API README.
 
@@ -347,3 +347,11 @@ The owner walked the full stack after T-17 and ordered these fixes on 2026-10-16
 - **Infra (`orderflow-engine-infra`):** `restart: unless-stopped` on every service of the full-stack compose; an end-to-end step in `test-all.{sh,ps1}`, after the web tests: it starts the full stack under its own compose project and ports, runs a Playwright spec on the official image whose tag matches the web's pinned `playwright` against it (cart → quote → confirm → order → My orders, in es and en, with the order number read back from E-05 through the client's origin), and stops the stack with `down -v`, also when the spec fails. The final line becomes `test-all: OK (API verify, web tests, end-to-end, documentation check, integrity check)`. Commits: `build(infra): restart the stack with docker (T-19)`, `test(infra): run the full flow against the stack (T-19)`.
 - **Done when:** each repository's own check passes (`./mvnw verify`, `docker build --target test .`), `test-all` ends with the line above, and the full stack shows Spanish names, currency codes and a remembered language by clicks.
 - **Commit:** `feat(db): seed catalog in the tenants' language (T-19)`, the first of the five commits named in the bullets above.
+
+### T-20: Seed Guatemala and Peru
+The assignment names four countries (Colombia, Ecuador, Guatemala, Peru); the seeds held two. The owner ordered the other two on 2026-10-16, as data only, so they also prove that no country data lives in the code (P-07).
+- **Covers:** SPEC §5, data model §1 (seed data), P-07.
+- **API (`orderflow-engine-api`):** `db/changelog/2026/2026-10-16-002-seed-gt-and-pe.yaml`, included after `2026-10-16-001`, with a rollback that removes everything it adds: currencies GTQ and PEN (scale 2), countries GT and PE, tenants `gt-alpha` and `pe-alpha`, their families, products, tax rates, levers, customers and credit accounts exactly as data model §1 lists them, names in Spanish, and anything per country the order numbers need. No Java change. Tests: `ProductContractIT` lists GTQ and PEN at scale 2 for the new tenants; a quote through E-01 for each tenant whose totals are computed by hand from the seed values (the GT tier and the PE combo, with their taxes); `LiquibaseRollbackIT` covers the new changeset; the README's seeded tenants sentence names the four. Commit: `feat(db): seed Guatemala and Peru tenants (T-20)`.
+- **Web (`orderflow-engine-web`):** `public/config/stores.json` lists the four new stores, grouped by tenant; a spec checks that the picker shows the four tenants and that a GTQ and a PEN catalog format with their currency code. Commit: `feat(web): add Guatemala and Peru stores (T-20)`.
+- **Done when:** `./mvnw verify` and `docker build --target test .` pass, and the full stack quotes and confirms an order in GTQ and in PEN by clicks.
+- **Commit:** `feat(db): seed Guatemala and Peru tenants (T-20)`, the first of the two commits named above.

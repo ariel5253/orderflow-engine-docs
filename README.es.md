@@ -83,7 +83,7 @@ Los documentos se citan entre sí por código, no por página. Cada familia de c
 | `A-01`…`A-10` | Supuestos | SPEC §13 |
 | `AC-01`…`AC-53` | Criterios de aceptación. Las filas eliminadas conservan su hueco | SPEC §14.2 |
 | `DEC-…`, `RISK-…` | Decisiones técnicas, riesgos | plan |
-| `T-00`…`T-19`, `GC-…`, `RF-…` | Tareas, restricciones globales, foco de revisión | TASKS |
+| `T-00`…`T-20`, `GC-…`, `RF-…` | Tareas, restricciones globales, foco de revisión | TASKS |
 | `E-01`…`E-07`, `BD-…`, `GAP-…` | Fichas de operación, decisiones de comportamiento, huecos conocidos | api-contract |
 | `DM-…` | Notas del modelo de datos | data-model |
 | `ADR-0001` | El registro de decisión de arquitectura | `orderflow-engine-api/docs/adr/` |

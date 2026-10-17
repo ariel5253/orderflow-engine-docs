@@ -27,18 +27,20 @@ PostgreSQL, with Liquibase changelogs in `orderflow-engine-api/src/main/resource
 
 | Table | Columns | Keys and checks |
 |-------|---------|-----------------|
-| `currencies` | `code` char(3), `scale` smallint | PK `code`. `CHECK scale BETWEEN 0 AND 4`. Seeds: COP (0), USD (2) |
-| `countries` | `code` char(2), `currency_code`, `rounding_mode`, `gift_tax_policy`, `quote_ttl` interval | PK `code`. FK → `currencies`. `CHECK rounding_mode` in the `java.math.RoundingMode` names except `UNNECESSARY`. `CHECK gift_tax_policy IN ('EXEMPT','TAXED')`. Seeds: CO, EC |
-| `tenants` | `id` text, `country_code`, `brand` | PK `id`. FK → `countries`. `UNIQUE (country_code, brand)`. Seeds: `co-alpha`, `ec-alpha` |
+| `currencies` | `code` char(3), `scale` smallint | PK `code`. `CHECK scale BETWEEN 0 AND 4`. Seeds: COP (0), USD (2), GTQ (2), PEN (2) |
+| `countries` | `code` char(2), `currency_code`, `rounding_mode`, `gift_tax_policy`, `quote_ttl` interval | PK `code`. FK → `currencies`. `CHECK rounding_mode` in the `java.math.RoundingMode` names except `UNNECESSARY`. `CHECK gift_tax_policy IN ('EXEMPT','TAXED')`. Seeds: CO, EC, GT, PE |
+| `tenants` | `id` text, `country_code`, `brand` | PK `id`. FK → `countries`. `UNIQUE (country_code, brand)`. Seeds: `co-alpha`, `ec-alpha`, `gt-alpha`, `pe-alpha` |
 
 Scale belongs to the currency. Rounding mode and gift tax policy are fiscal policy of the country, so two countries sharing a currency may still round differently.
 
-**Seed data** (`db/changelog/2026/2026-10-15-006-seed-co-and-ec.yaml` in `orderflow-engine-api`). It is demonstration data, chosen so the tests cover both scales and both gift tax policies; it is not a statement of real tax law. Product and customer names are written in the tenants' language, Spanish (SPEC §10.1): `2026-10-16-001-seed-names-in-spanish.yaml` renames the seeded rows, with a rollback to the original names.
+**Seed data** (`db/changelog/2026/2026-10-15-006-seed-co-and-ec.yaml` in `orderflow-engine-api`). It is demonstration data, chosen so the tests cover both scales and both gift tax policies; it is not a statement of real tax law. Product and customer names are written in the tenants' language, Spanish (SPEC §10.1): `2026-10-16-001-seed-names-in-spanish.yaml` renames the seeded rows, with a rollback to the original names. `2026-10-16-002-seed-gt-and-pe.yaml` adds Guatemala and Peru, the other two countries the assignment names, written in Spanish from the start, with a rollback that removes them.
 
 | Tenant | Country policy | Catalog and levers | Customers and credit |
 |--------|----------------|--------------------|----------------------|
 | `co-alpha` | COP scale 0, `HALF_UP`, gifts `TAXED`, quote TTL 15 min | Colas 350 ml (2,500) and 1.5 l, water 600 ml at 19% tax; chips 45 g at 5%. Tier rule on the 350 ml cola: 10 → 5%, 20 → 10%. Combo of 2 colas and 1 chips at 5,000. One water free for every 10 snacks, repeatable | Two customers; one has a 500,000 credit limit, the other pays cash |
 | `ec-alpha` | USD scale 2, `HALF_UP`, gifts `EXEMPT`, quote TTL 15 min | USD catalog at 15% tax, with plantain chips instead of chips. Family tier rule on colas: 12 → 4%, 24 → 8%. A combo at 3.99. A gift for a gross subtotal from 50.00 | A credit account with a 1,500.00 limit |
+| `gt-alpha` | GTQ scale 2, `HALF_UP`, gifts `EXEMPT`, quote TTL 15 min | Colas 350 ml (5.00) and 1.5 l (15.00), water 600 ml (4.00) and chips 45 g (3.50), all at 12% tax. Tier rule on the 350 ml cola: 12 → 5%, 24 → 10%. One water free for every 12 colas of 350 ml, repeatable | "Tienda Ciudad de Guatemala" with a 5,000.00 credit limit, and "Tienda Quetzaltenango", which pays cash |
+| `pe-alpha` | PEN scale 2, `HALF_UP`, gifts `TAXED`, quote TTL 15 min | Colas 350 ml (2.50) and 1.5 l (7.50), water 600 ml (2.00) and chips 45 g (1.80), all at 18% tax. Combo of 2 colas of 350 ml and 1 chips at 6.00. One water free for a gross subtotal from 100.00, not repeatable | "Tienda Lima" with a 2,000.00 credit limit, and "Tienda Arequipa", which pays cash |
 
 ## 2. Catalog and levers (tenant-scoped)
 
