@@ -59,6 +59,6 @@ The assignment does not ask for CI, so no pipeline is built. Verification runs l
 
 ## Delivery
 
-Versions exist only for the finished product, and a release is a pull request `release: vX.Y.Z` from `dev` into `main` in each code repository, merged **before** the repository link is sent. This delivery was sent without one, on the owner's decision: every phase was already closed into `main` with its merge commit, so the default branch shows the full work and every per-task commit.
+Versions exist only for the finished product, and a release is a pull request `release: vX.Y.Z` from `dev` into `main` in each code repository, merged **before** the repository link is sent. In this delivery every phase was already closed into `main` with its merge commit, so `dev` and `main` held the same tree and a release pull request would have been empty: v1.0.0 was released on 2026-10-17 as an annotated tag `v1.0.0` on `main` of each repository, with a GitHub Release that holds its notes ([pull-request-rules.md](pull-request-rules.md)).
 
 Repositories were private while the work was in progress. They became public at delivery, on 2026-10-17, and the rulesets were applied then.

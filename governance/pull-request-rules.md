@@ -68,6 +68,7 @@ gh pr merge <number> --merge --subject "chore: close <phase> phase (T-NN)" --bod
 | Body | The tasks included and the final verification output. It stays in the pull request, not in the commit |
 | Merge | **Merge commit**, never squash |
 | After merge | `dev` stays |
+| When `dev` and `main` already match | No pull request, since it would be empty: an annotated tag `vX.Y.Z` on `main` and a GitHub Release with the notes |
 
 The merge commit takes the release title instead of GitHub's default "Merge pull request #N":
 
