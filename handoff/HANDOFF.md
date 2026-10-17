@@ -53,8 +53,8 @@ Phases close on the owner's order, each with a merge commit on the `main` of the
 | Standalone repositories | Each folder copied alone has 0 broken links | Copy of each folder outside the workspace, links resolved, on 2026-10-14 |
 | ADR-0001 length | One A4 page at Arial 12 (2 cm margins), in English and in Spanish, as Word and PDF, with the accepted text | `python orderflow-engine-tools/render/build_deliverables.py` fails above one page; page count = 1 on 2026-10-15 |
 | Deliverable metadata | Author = license holder, title = document title. The Word files carry no generator or application name; the PDF files keep the converter's `Creator` and `Producer` fields | docx core properties and PDF info dictionary read on 2026-10-15 |
-| API tests | 333 unit and 301 integration tests green (Testcontainers PostgreSQL 17), the six golden tests among them. JaCoCo: 100% of lines and branches in `pricing.domain` (220 lines, 58 branches) and `pricing.domain.lever` (221 lines, 85 branches), gate ≥ 90%; 99.2% of lines and 98.0% of branches in the whole service. Each API pull request of §11 was verified on a clean export of its own commit | `bash orderflow-engine-infra/scripts/test-all.sh` → `test-all: OK (API verify, web tests, end-to-end, documentation check, integrity check)` on `dev` of every repository, and `target/site/jacoco/jacoco.xml`, on 2026-10-16 |
-| Web tests | The literal-text check passes on 14 templates, then 191 specs in 15 files pass in headless Chromium inside the test stage of the web Dockerfile, the layout measured at 768 × 1024 and 375 × 812. End to end, against the full stack: cart → quote → confirm → order → My orders passes in Spanish and in English, the order read back first in My orders with its total | `docker build --no-cache-filter test --target test .` in `orderflow-engine-web` on `dev`, and the end-to-end step of `test-all`, on 2026-10-16 |
+| API tests | 333 unit and 308 integration tests green (Testcontainers PostgreSQL 17), the six golden tests among them. JaCoCo: 100% of lines and branches in `pricing.domain` (220 lines, 58 branches) and `pricing.domain.lever` (221 lines, 85 branches), gate ≥ 90%; 99.2% of lines and 98.0% of branches in the whole service. Each API pull request of §11 was verified on a clean export of its own commit, T-20 (Guatemala and Peru) included | `bash orderflow-engine-infra/scripts/test-all.sh` → `test-all: OK (API verify, web tests, end-to-end, documentation check, integrity check)` on `dev` of every repository, and `target/site/jacoco/jacoco.xml`, on 2026-10-16 |
+| Web tests | The literal-text check passes on 14 templates, then 209 specs in 15 files pass in headless Chromium inside the test stage of the web Dockerfile, the layout measured at 768 × 1024 and 375 × 812. End to end, against the full stack: cart → quote → confirm → order → My orders passes in Spanish and in English, the order read back first in My orders with its total | `docker build --no-cache-filter test --target test .` in `orderflow-engine-web` on `dev`, and the end-to-end step of `test-all`, on 2026-10-16 |
 | PIT mutation score | 185 of 185 mutations detected (100%), threshold 80%, on `pricing.domain` and `pricing.domain.lever`, with the T-19 quantity cap. Test strength 100%; line coverage of the mutated classes 432/442 (98%) | `./mvnw -Pmutation verify` on the T-19 quantity commit, on 2026-10-16 |
 | Time spent | Three working days, 2026-10-13 to 2026-10-15, including the specification, as the API README states. The web work, measured slice by slice and recorded in the API README under "Not included": the assignment's screen 68 min; its container, the full stack and the web step of `test-all` 55 min; the extension beyond the assignment 3 h 1 min. These are working times; review time is not included | API README, on 2026-10-16 |
 
@@ -88,7 +88,7 @@ Project start: 2026-10-13. Cut line after: T-16. Update this table at the end of
 | T-16 | Final documentation and verification | D5 | done | 2026-10-15 |
 | T-17 | Web client: summary and full flow (optional) | D5 | done | 2026-10-16 |
 | T-19 | Fixes after the T-17 preview | D5 | done | 2026-10-16 |
-| T-20 | Seed Guatemala and Peru | D5 | doing | |
+| T-20 | Seed Guatemala and Peru | D5 | done | 2026-10-17 |
 
 ## 5. Commands to resume
 
@@ -188,8 +188,8 @@ Each API pull request was verified on a clean export of its own commit (`./mvnw 
 
 | Repository | Task pull requests | Phase closing |
 |------------|--------------------|---------------|
-| `orderflow-engine-web` | #5 order summary screen · #6 cart and idempotent confirmation · #7 order history screen · #8 currency codes and remembered language | Not yet, on the owner's order |
-| `orderflow-engine-api` | #26 product list (E-07) · #27 web time and scope record · #28 catalog in the tenants' language · #29 line and gift quantity cap | Not yet, on the owner's order |
+| `orderflow-engine-web` | #5 order summary screen · #6 cart and idempotent confirmation · #7 order history screen · #8 currency codes and remembered language · #9 Guatemala and Peru stores (T-20) | Not yet, on the owner's order |
+| `orderflow-engine-api` | #26 product list (E-07) · #27 web time and scope record · #28 catalog in the tenants' language · #29 line and gift quantity cap · #30 Guatemala and Peru tenants (T-20) | Not yet, on the owner's order |
 | `orderflow-engine-infra` | #9 web client in the full stack · #10 restart with Docker · #11 end-to-end flow in `test-all` | Not yet, on the owner's order |
 | `orderflow-engine-tools` | #9 figures relabeled for the web client and the product list | Not yet, on the owner's order |
-| `orderflow-engine-docs` | #14 web specification and T-19 · #15 this handoff and the regenerated figures | Not applicable: `main` only |
+| `orderflow-engine-docs` | #14 web specification and T-19 · #15 handoff and the regenerated figures · #16 Guatemala and Peru specification (T-20) · #17 this handoff | Not applicable: `main` only |
