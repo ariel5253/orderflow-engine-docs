@@ -57,7 +57,7 @@ The quote TTL, currency scale, rounding mode and gift tax policy are **country d
 
 ## 3. Adoption paths
 
-These are not implemented now, because the assignment does not ask for them and the evaluator could not run them. The project already produces what each one needs, so adopting them later changes CI configuration, not the code.
+These are not implemented now, because the assignment does not ask for them and the evaluator could not run them. For the first five, the project already produces what each one needs, so adopting them later changes CI configuration, not the code. The last one is a product feature with a ready design.
 
 | Item | Today | How it is adopted later | Project changes | Trigger |
 |------|-------|-------------------------|-----------------|---------|
@@ -66,6 +66,7 @@ These are not implemented now, because the assignment does not ask for them and 
 | Migration job and least-privilege roles | Liquibase runs at startup with the database owner's credential | A one-shot migration job runs Liquibase with an owner role before the service starts. The service connects with a DML-only role, and the quote lock of SPEC §7.1 moves to `pg_advisory_xact_lock` | The datasource keys, a grants changeset, the quote lock, and a test that runs as the DML-only role | A deployed environment, more than one replica, or a security review of database privileges |
 | Separate schema repository | The changelogs live with the API, their only owner (DEC-20) | The changelogs move to their own repository, published as a versioned artifact that the API pins and the deployment applies first | A `git mv` of `db/changelog/` (every changelog already has a `logicalFilePath`), a pinned version, and a pipeline step | A second service or team that owns or reads the same schema |
 | PIT in CI | Optional profile `./mvnw -Pmutation verify`, run before each delivery, and the score is recorded in the HANDOFF | A nightly CI job, or `scmMutationCoverage` on the files changed in a pull request. `withHistory` makes the runs incremental | None. Only CI configuration | Mutation runs are wanted on every change, but a full run is too slow for each build |
+| Catalog in several languages | Product descriptions are tenant data in the tenant's language (SPEC §10.1). The ES/EN switch translates the interface only | A `product_translations (tenant_id, product_id, locale, description)` table. A translation is written when the product is entered or changed, by the merchant or proposed by a translation service and reviewed by a person; it is never produced while a page is read. E-01, E-02 and E-07 return the description for `Accept-Language`, falling back to the tenant's language. A quote line keeps the description it was sealed with, so a confirmed order never changes | A changeset, the snapshot and product queries, the E-01/E-02/E-07 cards, and contract tests per language | The catalog becomes editable (an administration screen or import exists) and a tenant sells to buyers who read another language |
 
 ## 4. Risk register
 

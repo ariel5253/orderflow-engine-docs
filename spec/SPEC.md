@@ -72,7 +72,8 @@ Each rule has a stable ID. "Verified by" names the test that proves it (see §14
 ### BR-00 Cart normalization
 - Duplicate SKUs are merged by summing their quantities. Lines are sorted by SKU code. Pricing runs on the normalized cart, so the result never depends on the order the client sent.
 - Rejected:
-  - `qty ≤ 0` or a non-integer quantity → 400 `INVALID_QUANTITY`
+  - `qty ≤ 0`, a non-integer quantity, or a quantity above 1,000,000, also after the lines of a repeated SKU are merged → 400 `INVALID_QUANTITY`
+  - a gift quantity a rule derives above 1,000,000 → 400 `INVALID_QUANTITY`. The engine derives it with overflow-checked arithmetic, so a gift quantity never wraps around or answers 500
   - an empty cart → 400 `CART_EMPTY`
   - a SKU that is unknown, or that belongs to another tenant → 422 `UNKNOWN_SKU`
 - Verified by: `CartNormalizationTest`.
@@ -335,7 +336,7 @@ This section fixes the rules. The operation cards (E-01…E-07), with requests, 
 | Side | Mechanism | Files | Default and switching |
 |------|-----------|-------|-----------------------|
 | API | Spring `MessageSource`, UTF-8 | `src/main/resources/i18n/messages.properties` (Spanish base), `messages_es.properties`, `messages_en.properties` | `Accept-Language` picks the locale. Missing or unsupported → `app.i18n.default-locale=es` |
-| Web | `@ngx-translate/core`, runtime JSON | `public/i18n/es.json`, `public/i18n/en.json` | Default `es`. The header's ES/EN switch, or `?lang=en`, changes the language at run time without touching code. Every API call sends the active language in `Accept-Language`, so problem texts arrive in it |
+| Web | `@ngx-translate/core`, runtime JSON | `public/i18n/es.json`, `public/i18n/en.json` | Default `es`. The header's ES/EN switch, or `?lang=en`, changes the language at run time without touching code. The choice is kept in browser storage and restored on the next visit; `?lang=` wins over the stored choice and replaces it. A `?lang=` with no dictionary is ignored, as if absent: the visit starts in the stored choice, else in `es`. Every API call sends the active language in `Accept-Language`, so problem texts arrive in it |
 
 - **Domain and application layers carry only error codes and arguments.** The web adapter resolves the text. Logs are in English and never translated.
 - Keys are namespaced by feature, e.g. `error.QUOTE_EXPIRED.title` and `orderSummary.totals.taxableBase`.
@@ -380,7 +381,7 @@ The list is closed. Any other screen (search, categories, promotions, account, c
 | Store picker | Lists the seeded stores (tenant id, customer id, display name) from `public/config/stores.json`. It stands in for authentication (A-06). It is a disclosure, not a native `<select>`, because a closed select cuts long names | `screen-rules.spec.ts` |
 | Navigation | "Shop" (`/cart`), "My orders" (`/orders`) and the ES/EN switch (§9) | *(review)* |
 | Cart state | In the browser only, one cart per store, emptied after a 201. The server keeps no cart (§1) | `confirm-idempotency.spec.ts` |
-| Data text | Product descriptions and store names are seed data, shown as received and never translated | *(review)* |
+| Data text | Product descriptions and store names are tenant data, written in the tenant's language (Spanish for both seeded tenants), shown as received and never translated by the client. The ES/EN switch translates the interface, not the catalog. A catalog in several languages is an adoption path ([plan](plan.md) §3) | *(review)* |
 
 ### 10.2 Components: prevention at component level
 
@@ -394,7 +395,7 @@ Prevention lives in components, not in screens. A screen that prints text, holds
 
 | Shared component | Rule | Verified by |
 |------------------|------|-------------|
-| `ui-problem-notice` | Renders a `problem+json`: the API's `title` and `detail`, already in the active language, then the `code` and a reference made of the first 8 characters of `correlationId`, then the action of §10.5. A request with no answer shows the web text `problem.network` instead | `ui-problem-notice.spec.ts`, `problem-actions.spec.ts` |
+| `ui-problem-notice` | Renders a `problem+json`: the API's `title` and `detail`, already in the active language, then the `code` and a reference made of the first 8 characters of `correlationId`, then the action of §10.5. A request with no answer, or a 4xx without a `problem+json` body, shows the web text `problem.network` instead | `ui-problem-notice.spec.ts`, `problem-actions.spec.ts` |
 
 ### 10.3 Money on the front
 
@@ -402,6 +403,7 @@ Prevention lives in components, not in screens. A screen that prints text, holds
 |------|-------------|
 | The front never computes money. Every amount on screen is a string from an API body, the catalog included, formatted as is by one `money` pipe (§9). No arithmetic operator touches an amount | `money.pipe.spec.ts`; the absence of arithmetic *(review)* |
 | The cart shows list prices and unit counts, never a subtotal or a total. The total appears only with the quote | `cart.spec.ts` |
+| Every screen that shows amounts names their currency by its ISO code, because COP and USD share the `$` symbol: the cart says "Prices in {currency}" above the grid, and each total of the action bar and of My orders is followed by the code ("$87,534 COP", "$77.11 USD") | `cart.spec.ts`, `screen-rules.spec.ts` |
 | Catalog source: `GET /api/v1/products` (E-07), read on every visit to the cart, so the cart lists exactly what the API prices | `ProductContractIT` |
 | History currency: the E-05 body's `currency`, as in every other body (§8) | `OrderHistoryContractIT`, `history-read-your-writes.spec.ts` |
 
@@ -445,6 +447,8 @@ Every problem the front can receive has exactly one way out. The text comes from
 | Any other code | Order | "View my orders" (`order.actions.history`) | Opens `/orders` |
 | Any other code | My orders | "Go shopping" (`history.actions.shop`) | Opens `/cart` |
 
+A 4xx without a `problem+json` body never comes from the API (for example, the page of a misrouted proxy). The notice shows `problem.network` with the screen's "Any other code" action, and the request is not retried, because repeating it would repeat the answer.
+
 The measured time, split into the three parts of §1 (Deviation), is recorded in the API README under "Not included" and in the HANDOFF. The web README points to it.
 
 ## 11. Testing strategy
@@ -457,6 +461,7 @@ The measured time, split into the three parts of §1 (Deviation), is recorded in
 | Contract | HTTP status, `problem+json` shape, i18n | MockMvc |
 | Architecture | Pure domain, no float/double, transaction boundary placement | ArchUnit |
 | Web | The three component rules on every screen with long names; client idempotency, credit shortfall, problem actions and history freshness against a stubbed backend; money formatting; dictionary keys | Angular test runner, `HttpTestingController` |
+| End to end | The whole flow through the browser against the real stack (PostgreSQL, API, web client): cart → quote → confirm → order → My orders, in Spanish and English, with the order read back from the API | Playwright on its official image, against the full-stack compose, as a step of `test-all` |
 
 **The six golden tests the assignment requires.** Each one also asserts the BR-05 identities.
 
@@ -575,7 +580,7 @@ Rows that were removed from scope are deleted. IDs are never renumbered.
 | AC-11 | The same cart priced in CO (scale 0) and EC (scale 2) follows each country's config | §5 | T-07 | `GoldenPricingTest#multiCountry` |
 | AC-12 | Each gift tax policy follows the BR-04 table | BR-04 | T-06 | `GoldenPricingTest#giftPolicies` |
 | AC-13 | Duplicate SKUs merge, and the client's line order does not change the breakdown | BR-00 | T-03 | `CartNormalizationTest` |
-| AC-14 | `qty ≤ 0` → 400, empty cart → 400, unknown SKU → 422 | BR-00 | T-10 | `QuoteValidationIT` |
+| AC-14 | `qty ≤ 0` → 400, empty cart → 400, unknown SKU → 422; a quantity above 1,000,000, or a derived gift quantity above it, → 400 `INVALID_QUANTITY`, never 500 | BR-00 | T-10, T-19 | `QuoteValidationIT` |
 | AC-15 | A SKU rule beats a family rule | BR-02 | T-04 | `TierPrecedenceTest` |
 | AC-16 | A credit quote returns `fits`, `available` and `shortfall`. A total equal to available fits | BR-06 | T-10 | `CreditAdvisoryTest` |
 | AC-17 | GT-05: an over-limit quote reports `fits=false`, and confirming it → 409 with no order and no ledger row | BR-06 | T-10, T-12 | `GoldenQuoteTest#gt05`, `CreditLimitIT` |
@@ -606,13 +611,13 @@ Rows that were removed from scope are deleted. IDs are never renumbered.
 | AC-43 | On every screen, the action bar respects the safe area and stays above the on-screen keyboard. The cart's quantity input is the keyboard case | §10.2 | T-17 | `order-summary.spec.ts`, `screen-rules.spec.ts`, `ui-action-bar.spec.ts` |
 | AC-44 | Every product image, in the cart grid and on breakdown lines, renders through `ui-product-image` with one aspect ratio whatever the source image's ratio, and a missing image falls back to the placeholder | §10.2 | T-17 | `order-summary.spec.ts`, `screen-rules.spec.ts`, `ui-product-image.spec.ts` |
 | AC-45 | The web README explains prevention at component level, the screens and routes, how to run the flow with the API, and where the time spent beyond the one-hour cap is recorded | §10, §15 | T-17 | `check-docs` (required headings) |
-| AC-46 | Web `es` and `en` dictionaries have identical keys, each sets `app.formatLocale`, every key the screens use exists (including keys built at run time for status, origin, payment method and actions), and none is unused | §9 | T-17 | `check-docs`, `i18n-keys.spec.ts` |
+| AC-46 | Web `es` and `en` dictionaries have identical keys, each sets `app.formatLocale`, every key the screens use exists (including keys built at run time for status, origin, payment method and actions), and none is unused. The ES/EN choice survives a reload, and `?lang=` replaces it | §9 | T-17, T-19 | `check-docs`, `i18n-keys.spec.ts`, `language.spec.ts` |
 | AC-47 | The domain is free of Spring and JDBC, and `@Transactional` appears only in the application layer | §12 | T-01, T-11 | `DomainPurityArchTest`, `TransactionBoundaryArchTest` |
 | AC-48 | Housekeeping purges keys, expired quotes and sent events by TTL | §12 | T-15 | `HousekeepingIT` |
 | AC-49 | The summary creates one `Idempotency-Key` per quote on the first tap of "Confirm order", stores it, and sends the same key on every retry of that quote: no answer, 5xx, `IDEMPOTENCY_KEY_IN_PROGRESS`, reload. The button is disabled while E-03 is in flight, so a double tap sends one request, and a replayed 201 shows the "already recorded" notice | §10.4, §7.3 | T-17 | `confirm-idempotency.spec.ts` |
 | AC-50 | An `OPEN` credit quote with `fits=false` disables "Confirm order", shows the shortfall and offers "Pay cash", which quotes the same lines with `CASH` | §10.4, BR-06 | T-17 | `credit-shortfall.spec.ts` |
 | AC-51 | Every §8 error code, and a request with no answer, shows a notice with its text, code and reference, and exactly the action of the §10.5 table, default included. Each action does what the table says | §10.5 | T-17 | `problem-actions.spec.ts`, `ui-problem-notice.spec.ts` |
-| AC-52 | The front keeps no copy of orders: the order screen reads E-04 and My orders reads E-05 on every visit, so after a 201 the new order number appears first in My orders, with the confirmed total | §10.1, I-201 | T-17 | `history-read-your-writes.spec.ts`, `flow.spec.ts` |
+| AC-52 | The front keeps no copy of orders: the order screen reads E-04 and My orders reads E-05 on every visit, so after a 201 the new order number appears first in My orders, with the confirmed total. The same flow passes end to end against the real stack | §10.1, I-201 | T-17, T-19 | `history-read-your-writes.spec.ts`, `flow.spec.ts`, the end-to-end step of `test-all` |
 | AC-53 | `GET /api/v1/products` returns only the caller tenant's products, sorted by SKU, each with `sku`, `description`, `listPrice` and `taxRate` as strings, and `currency` once. It exposes no lever, customer or credit data, and an unknown tenant or customer gets 400 `TENANT_NOT_FOUND` or 404 `CUSTOMER_NOT_FOUND` | §8 | T-17 | `ProductContractIT` |
 
 ### 14.3 Beyond the assignment
