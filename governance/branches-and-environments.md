@@ -37,7 +37,7 @@ A new repository has no branches and no protections, so its first commit must be
 
 ## Protections
 
-Applied as **repository rulesets** right after the bootstrap. Rulesets support a different merge method per branch, which classic branch protection does not. GitHub enforces rulesets on private repositories only on paid plans. While a repository is private on a free plan, the same rules are followed by hand and the rulesets are applied when it becomes public.
+Applied as **repository rulesets** right after the bootstrap. Rulesets support a different merge method per branch, which classic branch protection does not. GitHub enforces rulesets on private repositories only on paid plans. While a repository is private on a free plan, the same rules are followed by hand and the rulesets are applied when it becomes public. A content repository with only `main` (`orderflow-engine-docs`, `orderflow-engine-page`) has the docs `main` column.
 
 | Rule | Code `main` | Code `dev` | Docs `main` |
 |------|-------------|------------|-------------|
@@ -59,6 +59,6 @@ The assignment does not ask for CI, so no pipeline is built. Verification runs l
 
 ## Delivery
 
-Versions exist only for the finished product. Delivery is a release pull request `release: vX.Y.Z` from `dev` into `main` in each code repository. It is merged **before** the repository link is sent, so the default branch shows the full work and every per-task commit.
+Versions exist only for the finished product, and a release is a pull request `release: vX.Y.Z` from `dev` into `main` in each code repository, merged **before** the repository link is sent. This delivery was sent without one, on the owner's decision: every phase was already closed into `main` with its merge commit, so the default branch shows the full work and every per-task commit.
 
-Repositories are private while the work is in progress. They become public at delivery, after the release pull requests are merged.
+Repositories were private while the work was in progress. They became public at delivery, on 2026-10-17, and the rulesets were applied then.
